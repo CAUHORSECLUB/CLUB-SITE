@@ -2,8 +2,8 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>CHC Horse Club — Presentation Mode</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>CHC Horse Club — Posters</title>
   <style>
     :root {
       --bg:#0b0c10;
@@ -15,7 +15,6 @@
       font-family: system-ui, sans-serif;
       background: var(--bg);
       color: var(--text);
-      height:100vh;
       overflow-y:scroll;
       scroll-snap-type: y mandatory;
     }
@@ -49,15 +48,14 @@
       opacity:1;
       transform: scale(1);
     }
-    .fade-zoom.out {
-      opacity:0;
-      transform: scale(0.9);
-    }
 
-    /* posters */
+    /* 포스터 영역 */
     .poster-rail {
-      display:flex; gap:20px; overflow-x:auto;
-      padding:20px; margin-top:20px;
+      display:flex;
+      gap:20px;
+      overflow-x:auto;
+      padding:20px;
+      margin-top:20px;
       scroll-snap-type:x mandatory;
     }
     .poster-rail::-webkit-scrollbar { display:none; }
@@ -74,50 +72,59 @@
     .card img { width:100%; display:block; }
     .meta { padding:10px; font-weight:bold; }
 
-    /* lightbox */
+    /* Lightbox */
     .lightbox {
-      position:fixed; inset:0; display:none;
-      background:rgba(0,0,0,.88);
-      justify-content:center; align-items:center;
-      z-index:1000; flex-direction:column;
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.9);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:100;
       padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
     }
-    .lightbox.open { display:flex; }
+    .lightbox.open { display:flex; flex-direction:column; gap:20px; }
     .lightbox img {
-      max-width:90%; max-height:80vh; border-radius:10px;
-      box-shadow:0 10px 40px rgba(0,0,0,.6);
-      transition: transform .3s ease;
+      max-width:90%;
+      max-height:80vh;
+      border-radius:12px;
     }
     .lightbox .controls {
-      margin-top:12px; display:flex; gap:12px;
+      display:flex;
+      gap:10px;
+      justify-content:center;
     }
     .lightbox button {
-      background:rgba(255,255,255,.1); border:0;
-      padding:10px 16px; border-radius:8px;
-      color:var(--text); font-size:16px;
+      background:rgba(255,255,255,0.1);
+      border:1px solid rgba(255,255,255,0.3);
+      color:white;
+      font-size:18px;
+      padding:8px 14px;
+      border-radius:8px;
       cursor:pointer;
     }
 
-    /* === 반응형 (모바일 전용) === */
+    /* 모바일 최적화 */
     @media (max-width: 768px) {
-      body {
-        scroll-snap-type: none;
-      }
       section {
         height:auto;
         min-height:100vh;
         padding:60px 20px;
       }
       h1 { font-size: clamp(28px, 8vw, 48px); }
-      h2 { font-size: clamp(22px, 7vw, 40px); }
-      p  { font-size: 16px; }
+      h2 { font-size: clamp(24px, 6vw, 40px); }
+      p  { font-size: 16px; line-height:1.6; }
+
       .poster-rail {
         flex-direction:column;
-        gap: 12px;
         overflow-x:visible;
+        gap:16px;
       }
-      .card { width:100%; max-width: 400px; margin:0 auto; }
-      .lightbox img { max-width:95%; max-height:70vh; }
+      .card {
+        width:100%;
+        max-width:420px;
+        margin:0 auto;
+      }
     }
   </style>
 </head>
@@ -138,12 +145,12 @@
   <!-- Posters -->
   <section id="posters">
     <h2 class="fade-zoom">포스터 모음</h2>
-    <div class="poster-rail fade-zoom">
+    <div class="poster-rail fade-zoom" id="posterRail">
       <div class="card"><img src="assets/poster1.jpg" alt="포스터1"><div class="meta">JOIN</div></div>
       <div class="card"><img src="assets/poster2.jpg" alt="포스터2"><div class="meta">회원모집</div></div>
       <div class="card"><img src="assets/poster3.jpg" alt="포스터3"><div class="meta">소개</div></div>
       <div class="card"><img src="assets/poster4.jpg" alt="포스터4"><div class="meta">활동사진</div></div>
-      <div class="card"><img src="assets/poster5.jpg" alt="포스터5"><div class="meta">COMING SOON</div></div>
+      <div class="card"><img src="assets/poster5.jpg" alt="포스터5"><div class="meta">예고</div></div>
     </div>
   </section>
 
@@ -156,11 +163,11 @@
 
   <!-- Lightbox -->
   <div class="lightbox" id="lightbox">
-    <img id="lightboxImg" src="" alt="poster">
+    <img id="lightboxImg" src="" alt="포스터 미리보기">
     <div class="controls">
       <button id="prevBtn">◀ 이전</button>
-      <button id="nextBtn">다음 ▶</button>
       <button id="closeBtn">닫기 ✕</button>
+      <button id="nextBtn">다음 ▶</button>
     </div>
   </div>
 
@@ -171,24 +178,20 @@
       entries.forEach(entry=>{
         if(entry.isIntersecting){
           entry.target.classList.add('in');
-          entry.target.classList.remove('out');
-        } else {
-          entry.target.classList.remove('in');
-          entry.target.classList.add('out');
         }
       });
     }, { threshold:0.3 });
     faders.forEach(el => io.observe(el));
 
-    // Lightbox 기능
+    // Lightbox
     const cards = document.querySelectorAll('.card img');
     const lb = document.getElementById('lightbox');
     const lbImg = document.getElementById('lightboxImg');
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
     const closeBtn = document.getElementById('closeBtn');
-    let current = 0;
 
+    let current = 0;
     function openAt(i){
       current = i;
       lbImg.src = cards[i].src;
@@ -199,18 +202,21 @@
       current = (current + dir + cards.length) % cards.length;
       lbImg.src = cards[current].src;
     }
-    cards.forEach((img,i)=> img.addEventListener('click', ()=>openAt(i)));
-    prevBtn.addEventListener('click', ()=>nav(-1));
-    nextBtn.addEventListener('click', ()=>nav(1));
-    closeBtn.addEventListener('click', close);
-    lb.addEventListener('click', (e)=>{ if(e.target===lb) close(); });
 
-    // 스와이프 감지
+    cards.forEach((img,i)=> img.addEventListener('click', ()=> openAt(i)));
+    closeBtn.addEventListener('click', close);
+    prevBtn.addEventListener('click', ()=> nav(-1));
+    nextBtn.addEventListener('click', ()=> nav(1));
+
+    lb.addEventListener('click', e=>{ if(e.target===lb) close(); });
+
+    // 스와이프 지원 (모바일)
     let startX=0;
-    lb.addEventListener('touchstart', e=>{ startX=e.touches[0].clientX; });
-    lb.addEventListener('touchend', e=>{
-      let dx=e.changedTouches[0].clientX-startX;
-      if(Math.abs(dx)>50){ nav(dx<0?1:-1); }
+    lbImg.addEventListener('touchstart', e=> startX=e.touches[0].clientX);
+    lbImg.addEventListener('touchend', e=>{
+      let dx = e.changedTouches[0].clientX - startX;
+      if(dx > 50) nav(-1);
+      if(dx < -50) nav(1);
     });
   </script>
 </body>
