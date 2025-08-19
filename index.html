@@ -73,7 +73,7 @@
 
     /* --- Hero (배너 이미지 제거 버전) --- */
     .hero{ position:relative; isolation:isolate; padding:clamp(36px, 6vh, 86px) 0 24px }
-    /* 3) 드래그-리빌 모션을 위한 기본 상태 */
+    /* 3) 드래그-리빌 모션을 위한 기본 상태 (페이드 인) */
     .lift{ opacity:0; transform:translateY(18px); transition: opacity .6s cubic-bezier(.22,.7,.23,1), transform .6s cubic-bezier(.22,.7,.23,1); will-change:transform,opacity }
     .lift.on{ opacity:1; transform:translateY(0) }
 
@@ -184,6 +184,9 @@
       100%{ box-shadow:0 0 0 rgba(142,225,255,0) }
     }
 
+    /* chip (문의 섹션용) */
+    .chip{ display:inline-flex; align-items:center; gap:.35rem; padding:.35rem .7rem; border-radius:999px; border:1px solid rgba(255,255,255,.14); color:var(--muted); }
+
     @media (max-width: 600px) {
       .rail-btn{ width:36px; height:36px }
     }
@@ -219,7 +222,7 @@
       <p class="lead lift" id="heroLead">
         아래 가로 스크롤 카드에서 이미지를 탭하면 크게 볼 수 있어요.
       </p>
-      <!-- 3) 버튼(포스터 보러가기/동아리 소개) 삭제 -->
+      <!-- 버튼(포스터 보러가기/동아리 소개) 삭제 -->
     </section>
 
     <!-- About -->
@@ -357,11 +360,12 @@
   </div>
 
   <script>
-    /* --- 4) 드래그(또는 살짝 스크롤) 시 자연스러운 올라오는 모션 --- */
+    /* --- 4) 드래그(또는 살짝 스크롤) 시 자연스러운 올라오는 모션 (페이드 인) --- */
     (function(){
       const liftTargets = document.querySelectorAll('.lift');
       const armed = new WeakSet();
 
+      // 화면에 들어온 요소만 '무장' 해두고, 실제 등장(페이드)은 살짝의 스크롤/드래그 때 시작
       const io = new IntersectionObserver((entries)=>{
         entries.forEach(e=>{
           if(e.isIntersecting){ armed.add(e.target); }
@@ -375,7 +379,7 @@
           if(armed.has(el)) el.classList.add('on');
         });
       };
-      // 스크롤로도 발동(자연스럽게)
+      // 스크롤 중 아래 방향일 때 자연스럽게 발동
       let lastY = window.scrollY;
       window.addEventListener('scroll', ()=>{
         if(window.scrollY > lastY){ tryReveal(); }
@@ -389,7 +393,6 @@
         if(e.clientY - startY > 12){ tryReveal(); revealed=true; startY=null; }
       }, {passive:true});
       window.addEventListener('pointerup', ()=>{ startY=null; }, {passive:true});
-      // 최초 진입시 화면에 보이는 요소는 약간의 스크롤 후 나타나도록 대기(요청한 연출)
     })();
 
     /* --- 보조 스크롤 리빌(카드 등) --- */
