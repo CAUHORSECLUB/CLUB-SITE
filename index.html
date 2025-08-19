@@ -57,7 +57,7 @@
       transform: scale(0.85);
     }
 
-    /* posters */
+    /* posters (PC 기본: 가로 스크롤) */
     .poster-rail {
       display:flex; gap:20px; overflow-x:auto;
       padding:20px; margin-top:20px;
@@ -118,6 +118,34 @@
     }
     .lightbox .prev { left:20px; }
     .lightbox .next { right:20px; }
+
+    /* 모바일 전용 반응형: 포스터 세로 나열 */
+    @media (max-width: 768px) {
+      body { scroll-snap-type:none; }
+      section {
+        height:auto;
+        min-height:calc(var(--vh, 1vh) * 100);
+        padding:60px 20px;
+      }
+      h1 { font-size: clamp(28px, 8vw, 48px); }
+      h2 { font-size: clamp(24px, 6vw, 40px); }
+      p  { font-size: 16px; line-height:1.6; }
+
+      .poster-rail {
+        flex-direction:column;
+        overflow-x:visible;
+        gap:24px;
+      }
+      .card {
+        width:100%;
+        max-width:95%;
+        margin:0 auto;
+      }
+      .card img {
+        border-radius:12px;
+      }
+      .lightbox img { max-width:95%; max-height:75%; }
+    }
   </style>
 </head>
 <body>
