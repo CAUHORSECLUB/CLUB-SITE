@@ -3,23 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <title>CHC Horse Club — Presentation Mode</title>
+  <!-- iPhone 노치/Safe Area 대응 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <style>
     :root {
       --bg:#0b0c10;
       --text:#eaedf2;
       --muted:#a8b0bd;
+      --vh: 1vh; /* iOS 보정용 */
     }
     body {
       margin:0;
       font-family: system-ui, sans-serif;
       background: var(--bg);
       color: var(--text);
-      height:100vh;
+      height:calc(var(--vh, 1vh) * 100);
       overflow-y:scroll;
       scroll-snap-type: y mandatory;
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
     }
     section {
-      height:100vh;
+      height:calc(var(--vh, 1vh) * 100);
       display:flex;
       flex-direction:column;
       align-items:center;
@@ -41,7 +45,7 @@
     /* fade + zoom */
     .fade-zoom {
       opacity:0;
-      transform: scale(0.9);
+      transform: scale(0.85);
       transition: all 0.8s ease;
     }
     .fade-zoom.in {
@@ -50,7 +54,7 @@
     }
     .fade-zoom.out {
       opacity:0;
-      transform: scale(0.9);
+      transform: scale(0.85);
     }
 
     /* posters */
@@ -75,41 +79,41 @@
 
     /* Lightbox */
     .lightbox {
-      position:fixed;
-      inset:0;
+      position:fixed; inset:0;
       background:rgba(0,0,0,0.9);
       display:none;
       align-items:center;
       justify-content:center;
       z-index:100;
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
     }
     .lightbox.open { display:flex; }
     .lightbox img {
       max-width:90%;
-      max-height:90%;
+      max-height:80%;
       border-radius:12px;
+      box-shadow:0 0 20px rgba(0,0,0,.5);
     }
-    .lightbox .close-btn {
+    .lightbox .close {
       position:absolute;
-      top:20px; right:20px;
-      background:rgba(255,255,255,0.1);
+      top: max(16px, env(safe-area-inset-top));
+      right: max(16px, env(safe-area-inset-right));
+      background:rgba(255,255,255,.1);
       border:none;
-      color:white;
+      color:var(--text);
       font-size:24px;
       border-radius:50%;
-      width:40px; height:40px;
+      width:44px; height:44px;
       cursor:pointer;
     }
-    .lightbox .nav-btn {
+    .lightbox .nav {
       position:absolute;
-      top:50%;
-      transform:translateY(-50%);
-      background:rgba(255,255,255,0.1);
-      border:none;
-      color:white;
-      font-size:32px;
-      border-radius:50%;
+      top:50%; transform:translateY(-50%);
+      font-size:40px;
+      background:rgba(255,255,255,.1);
+      border:none; color:var(--text);
       width:50px; height:50px;
+      border-radius:50%;
       cursor:pointer;
     }
     .lightbox .prev { left:20px; }
@@ -151,13 +155,20 @@
 
   <!-- Lightbox -->
   <div class="lightbox" id="lightbox">
-    <button class="close-btn" id="closeBtn">✕</button>
-    <button class="nav-btn prev" id="prevBtn">◀</button>
-    <img id="lightboxImg" alt="Poster">
-    <button class="nav-btn next" id="nextBtn">▶</button>
+    <button class="close" id="closeBtn">×</button>
+    <button class="nav prev" id="prevBtn">◀</button>
+    <img id="lightboxImg" alt="poster">
+    <button class="nav next" id="nextBtn">▶</button>
   </div>
 
   <script>
+    // vh 보정 (iOS Safari)
+    function fixVH(){
+      document.documentElement.style.setProperty('--vh', window.innerHeight * 0.01 + 'px');
+    }
+    window.addEventListener('resize', fixVH);
+    fixVH();
+
     // fade+zoom 애니메이션
     const faders = document.querySelectorAll('.fade-zoom');
     const io = new IntersectionObserver((entries)=>{
@@ -173,47 +184,51 @@
     }, { threshold:0.3 });
     faders.forEach(el => io.observe(el));
 
-    // Lightbox 기능
+    // Lightbox
     const cards = document.querySelectorAll('.card img');
-    const lightbox = document.getElementById('lightbox');
-    const lightboxImg = document.getElementById('lightboxImg');
+    const lb = document.getElementById('lightbox');
+    const lbImg = document.getElementById('lightboxImg');
     const closeBtn = document.getElementById('closeBtn');
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
     let current = 0;
 
-    function showLightbox(index){
-      current = index;
-      lightboxImg.src = cards[current].src;
-      lightbox.classList.add('open');
+    function openAt(i){
+      current = i;
+      lbImg.src = cards[i].src;
+      lb.classList.add('open');
+      document.body.style.overflow='hidden'; // 뒷배경 스크롤 방지
     }
-    function closeLightbox(){
-      lightbox.classList.remove('open');
+    function close(){
+      lb.classList.remove('open');
+      document.body.style.overflow='';
     }
-    function showNext(dir){
+    function nav(dir){
       current = (current + dir + cards.length) % cards.length;
-      lightboxImg.src = cards[current].src;
+      lbImg.src = cards[current].src;
     }
 
-    cards.forEach((card,i)=>{
-      card.addEventListener('click', ()=> showLightbox(i));
-    });
-    closeBtn.addEventListener('click', closeLightbox);
-    prevBtn.addEventListener('click', ()=> showNext(-1));
-    nextBtn.addEventListener('click', ()=> showNext(1));
-    lightbox.addEventListener('click', (e)=>{
-      if(e.target===lightbox) closeLightbox();
+    cards.forEach((c,i)=> c.addEventListener('click', ()=>openAt(i)));
+    closeBtn.addEventListener('click', close);
+    prevBtn.addEventListener('click', ()=>nav(-1));
+    nextBtn.addEventListener('click', ()=>nav(1));
+    lb.addEventListener('click', e=>{ if(e.target===lb) close(); });
+
+    // swipe (터치 슬라이드)
+    let startX=0;
+    lb.addEventListener('touchstart', e=>{ startX = e.touches[0].clientX; });
+    lb.addEventListener('touchend', e=>{
+      let dx = e.changedTouches[0].clientX - startX;
+      if(dx>50) nav(-1);
+      if(dx<-50) nav(1);
     });
 
-    // 드래그/스와이프
-    let startX = 0;
-    lightboxImg.addEventListener('touchstart', e=>{
-      startX = e.touches[0].clientX;
-    });
-    lightboxImg.addEventListener('touchend', e=>{
-      let endX = e.changedTouches[0].clientX;
-      if(endX - startX > 50) showNext(-1);
-      if(startX - endX > 50) showNext(1);
+    // 키보드 제어
+    document.addEventListener('keydown', e=>{
+      if(!lb.classList.contains('open')) return;
+      if(e.key==='Escape') close();
+      if(e.key==='ArrowLeft') nav(-1);
+      if(e.key==='ArrowRight') nav(1);
     });
   </script>
 </body>
