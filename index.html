@@ -2,14 +2,15 @@
 <html lang="ko">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- iOS 노치/Safe Area 대응 + 오토확대 방지 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1" />
+  <meta name="format-detection" content="telephone=no">
   <title>CHC Horse Club — Poster Showcase</title>
   <meta name="description" content="중앙대학교 승마동아리 CHC 홍보 포스터 전시 사이트" />
   <meta name="color-scheme" content="dark light" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <!-- 폰트: 시스템 우선 (iOS 최적), Playfair는 헤드라인에만 제한 -->
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;700;800;900&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
   <style>
     :root{
       --bg:#0b0c10;         /* 배경 */
@@ -21,100 +22,128 @@
       --card:#161922;
       --shadow: 0 10px 30px rgba(0,0,0,.35);
       --radius: 18px;
+      --hit: 44px;          /* iOS 탭 최소 히트 영역 */
+      --container: min(1200px, 92vw);
     }
 
+    /* 기본 세팅 (iOS 텍스트 오토확대/링크 전화번호 변환 방지) */
     *{box-sizing:border-box}
     html,body{height:100%}
-    html{scroll-behavior:smooth}
+    html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
     body{
-      margin:0; padding:0;
-      font-family:"Pretendard", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      margin:0; padding:0 env(safe-area-inset-right) 0 env(safe-area-inset-left);
+      font-family: system-ui, -apple-system, "SF Pro Text", "Apple SD Gothic Neo", Segoe UI, Roboto, Helvetica, Arial, "Noto Sans KR", sans-serif;
       color:var(--text);
-      background:radial-gradient(1200px 800px at 85% -10%, rgba(141,255,216,.08), transparent 60%),
-                 radial-gradient(1000px 700px at -10% 10%, rgba(124,181,255,.08), transparent 70%),
-                 var(--bg);
+      background:
+        radial-gradient(1200px 800px at 85% -10%, rgba(141,255,216,.08), transparent 60%),
+        radial-gradient(1000px 700px at -10% 10%, rgba(124,181,255,.08), transparent 70%),
+        var(--bg);
       line-height:1.6;
+      -webkit-tap-highlight-color: transparent;
+      overscroll-behavior-y: none;
     }
+    img{display:block; max-width:100%; height:auto; image-rendering:auto; -webkit-user-drag:none}
+    a{color:inherit}
 
     /* --- Layout --- */
-    .container{ width:min(1200px, 92vw); margin:0 auto; }
+    .container{ width:var(--container); margin:0 auto; }
     header{
       position:sticky; top:0; z-index:40; backdrop-filter:saturate(180%) blur(10px);
       background:linear-gradient(to bottom, rgba(11,12,16,.78), rgba(11,12,16,.45));
       border-bottom:1px solid rgba(255,255,255,.06);
+      padding-top: max(8px, env(safe-area-inset-top)); /* 노치 */
     }
-    .nav{ display:flex; align-items:center; justify-content:space-between; padding:.9rem 0; }
-    .brand{ display:flex; align-items:center; gap:.75rem; font-weight:800; letter-spacing:.5px }
-    .brand .logo{ width:34px; height:34px; border-radius:10px; background:linear-gradient(135deg, var(--brand), var(--brand-2)); box-shadow:var(--shadow); display:grid; place-items:center; font-weight:900; color:#0b0c10 }
-    .nav a{ color:var(--muted); text-decoration:none; margin-left:1.1rem; font-weight:600 }
-    .nav a:hover{ color:var(--text) }
-    .nav .cta{ margin-left:1.1rem; padding:.55rem .9rem; border-radius:12px; border:1px solid rgba(255,255,255,.12); color:var(--text) }
+    .nav{ display:flex; align-items:center; justify-content:space-between; padding:.7rem 0 .9rem; gap:12px }
+    .brand{ display:flex; align-items:center; gap:.6rem; font-weight:800; letter-spacing:.2px; min-height:var(--hit) }
+    .brand .logo{
+      width:34px; height:34px; border-radius:10px;
+      background:linear-gradient(135deg, var(--brand), var(--brand-2));
+      box-shadow:var(--shadow); display:grid; place-items:center; font-weight:900; color:#0b0c10;
+      flex:0 0 34px;
+    }
+    .brand .text{white-space:nowrap; font-size:clamp(15px, 3.5vw, 18px)}
+    nav{ display:flex; align-items:center; gap:.2rem; }
+    .nav a{
+      color:var(--muted); text-decoration:none; margin-left:.6rem; font-weight:700;
+      padding:.45rem .7rem; border-radius:10px; line-height:1; display:inline-flex; align-items:center; min-height:var(--hit)
+    }
+    .nav a:hover{ color:var(--text); background:rgba(255,255,255,.06) }
+    .nav .cta{ border:1px solid rgba(255,255,255,.14); color:var(--text) }
 
     /* --- Hero --- */
-    .hero{ position:relative; isolation:isolate; padding:clamp(48px, 6vh, 80px) 0 40px }
+    .hero{ position:relative; isolation:isolate; padding:clamp(36px, 5vh, 72px) 0 40px }
     .hero-banner{
       overflow:hidden; border-radius:16px; box-shadow:var(--shadow);
-      margin:0 0 18px; background:#0f1117; border:1px solid rgba(255,255,255,.08);
+      margin:0 0 18px; background:
+        linear-gradient(135deg, rgba(142,225,255,.12), rgba(181,255,207,.06));
+      border:1px solid rgba(255,255,255,.08);
     }
-    .hero-banner figure{ margin:0; aspect-ratio:16/9; width:100%; height:auto; }
-    .hero-banner img{ width:100%; height:100%; object-fit:cover; display:block; filter:saturate(.98) contrast(1.02) }
-    .hero h1{ font-family:"Playfair Display", serif; font-size:clamp(38px, 6vw, 66px); line-height:1.05; margin:0 0 .5rem }
-    .hero p{ color:var(--muted); margin:0 0 1.2rem }
-    .hero .chip{ display:inline-flex; align-items:center; gap:.45rem; border:1px solid rgba(255,255,255,.12); padding:.35rem .6rem; border-radius:999px; font-size:.85rem; color:var(--muted) }
-    .hero .actions{ display:flex; gap:.6rem; margin-top:1rem }
-    .btn{ appearance:none; border:none; background:linear-gradient(135deg,var(--brand),var(--brand-2)); color:#0b0c10; font-weight:800; padding:.85rem 1rem; border-radius:14px; box-shadow:var(--shadow); cursor:pointer; position:relative; }
-    .btn[variant="ghost"]{ background:transparent; color:var(--text); border:1px solid rgba(255,255,255,.12) }
+    .hero-banner figure{ margin:0; aspect-ratio:16/9; width:100%; height:auto; position:relative }
+    .hero-banner img{
+      width:100%; height:100%; object-fit:cover; display:block; filter:saturate(.98) contrast(1.02);
+      background:linear-gradient(135deg, rgba(142,225,255,.08), rgba(181,255,207,.06)); /* 이미지 없을 때 안전한 배경 */
+    }
+    .hero h1{
+      font-family:"Playfair Display", ui-serif, Georgia, "Times New Roman", serif;
+      font-size:clamp(28px, 6vw, 54px); line-height:1.12; margin:0 0 .5rem; letter-spacing:.2px
+    }
+    .hero p{ color:var(--muted); margin:.2rem 0 1.2rem; font-size:clamp(14px, 3.4vw, 18px) }
+    .chip{
+      display:inline-flex; align-items:center; gap:.45rem;
+      border:1px solid rgba(255,255,255,.12); padding:.35rem .6rem; border-radius:999px;
+      font-size:.9rem; color:var(--muted)
+    }
+    .actions{ display:flex; gap:.6rem; margin-top:1rem; flex-wrap:wrap }
+    .btn{
+      appearance:none; border:none; background:linear-gradient(135deg,var(--brand),var(--brand-2));
+      color:#0b0c10; font-weight:800; padding:.9rem 1rem; border-radius:14px;
+      box-shadow:var(--shadow); cursor:pointer; position:relative; min-height:var(--hit)
+    }
+    .btn[variant="ghost"]{ background:transparent; color:var(--text); border:1px solid rgba(255,255,255,.14) }
     .btn:active{ transform:translateY(1px) scale(0.98); transition:transform .06s ease; }
 
     /* --- Sections --- */
-    .section{ padding:70px 0 }
-    .section h2{ font-size:clamp(28px, 4vw, 42px); margin:0 0 .5rem; letter-spacing:.3px }
-    .section p.lead{ color:var(--muted); margin-top:.2rem }
+    .section{ padding:64px 0 }
+    .section h2{ font-size:clamp(24px, 4.5vw, 38px); margin:0 0 .5rem; letter-spacing:.3px }
+    .section p.lead{ color:var(--muted); margin-top:.2rem; font-size:clamp(14px, 3.4vw, 18px) }
 
     /* --- Poster Rail --- */
-    .rail-wrap{
-      position:relative;
-    }
+    .rail-wrap{ position:relative; }
     .grid{
-      display:flex; gap:18px; margin-top:28px;
-      overflow-x:auto; overflow-y:visible; padding-bottom:8px;
+      display:flex; gap:18px; margin-top:22px;
+      overflow-x:auto; overflow-y:visible; padding:2px 2px 10px;
       scroll-snap-type:x mandatory;
       -webkit-overflow-scrolling:touch;
       scrollbar-width:none;
       scroll-behavior:smooth;
+      touch-action: pan-x pinch-zoom; /* iOS 가로 스크롤/핀치 충돌 방지 */
     }
     .grid::-webkit-scrollbar{ display:none; }
 
     .card{
-      flex:0 0 auto; width:min(76vw, 520px);
+      flex:0 0 auto; width:min(82vw, 520px);
       background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
       border:1px solid rgba(255,255,255,.08); border-radius:var(--radius);
       overflow:hidden; box-shadow:var(--shadow); position:relative;
-      scroll-snap-align:center;
-      cursor:pointer;
+      scroll-snap-align:center; cursor:pointer;
+      -webkit-user-select:none; user-select:none;
+      transition:transform .25s ease
     }
-    /* hint overlay */
-    .card::after{
-      content:"클릭하면 크게 보기";
-      position:absolute; left:12px; bottom:12px;
-      font-size:.8rem; color:#dfe7f5; opacity:0; transform:translateY(6px);
-      background:rgba(0,0,0,.35); padding:.25rem .5rem; border-radius:8px;
-      transition:opacity .25s ease, transform .25s ease;
-      pointer-events:none;
-    }
-    .card:hover::after{ opacity:1; transform:translateY(0) }
+    .card:active{ transform:translateY(1px) }
+    /* hint overlay (iOS는 hover가 없으므로 항상 접근성 텍스트로만 제공) */
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 
-    /* 포스터 비율: 1587x2245 */
-    .card figure{ margin:0; aspect-ratio:1587/2245; background:#0f1117; display:grid; place-items:center }
+    /* 포스터 비율: 1587x2245 기준, 모바일 3:4로 완만화 */
+    .card figure{ margin:0; aspect-ratio:3/4; background:#0f1117; display:grid; place-items:center }
+    @media (min-width:480px){ .card figure{ aspect-ratio:1587/2245 } }
     .card img{ width:100%; height:100%; object-fit:cover; display:block; filter:saturate(.98) contrast(1.02) }
     .card .meta{ padding:14px 16px; display:flex; align-items:center; justify-content:space-between; gap:10px }
-    .meta .title{ font-weight:700; letter-spacing:.3px }
-    .meta .tag{ font-size:.82rem; color:var(--muted); padding:.25rem .55rem; border:1px solid rgba(255,255,255,.14); border-radius:999px }
+    .meta .title{ font-weight:800; letter-spacing:.2px; font-size:clamp(15px, 3.6vw, 18px) }
+    .meta .tag{ font-size:.85rem; color:var(--muted); padding:.28rem .6rem; border:1px solid rgba(255,255,255,.14); border-radius:999px }
 
     @media (min-width:1024px){
       .card{ width:520px }
     }
-    .card:hover{ transform:translateY(-2px); transition:transform .25s ease }
     .card:hover img{ transform:scale(1.01); transition:transform .35s ease }
 
     /* Rail nav buttons */
@@ -133,24 +162,30 @@
       display:grid; place-items:center; cursor:pointer;
       box-shadow:var(--shadow);
       transition:transform .12s ease, opacity .2s ease;
-      user-select:none;
+      user-select:none; min-height:var(--hit)
     }
     .rail-btn:active{ transform:scale(.98) }
     .rail-btn[disabled]{ opacity:.35; cursor:not-allowed }
 
     /* --- Lightbox --- */
-    .lightbox{ position:fixed; inset:0; background:rgba(6,8,12,.85); display:none; place-items:center; z-index:60 }
+    .lightbox{
+      position:fixed; inset:0; background:rgba(6,8,12,.88); display:none; place-items:center; z-index:60;
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    }
     .lightbox.open{ display:grid }
     .lightbox .inner{ width:min(1100px, 92vw); max-height:88vh; display:grid; gap:14px }
     .lightbox figure{ margin:0; height:70vh; background:#000; border-radius:16px; overflow:hidden; box-shadow:var(--shadow) }
-    .lightbox img{ width:100%; height:100%; object-fit:contain }
-    .lightbox .bar{ display:flex; align-items:center; justify-content:space-between }
+    .lightbox img{ width:100%; height:100%; object-fit:contain; touch-action:manipulation }
+    .lightbox .bar{ display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap }
     .lightbox .bar .left{ display:flex; align-items:center; gap:10px }
-    .lightbox .bar .title{ font-weight:800 }
-    .icon-btn{ background:transparent; color:var(--text); border:1px solid rgba(255,255,255,.18); padding:.55rem .75rem; border-radius:12px; cursor:pointer }
+    .lightbox .bar .title{ font-weight:900 }
+    .icon-btn{
+      background:transparent; color:var(--text); border:1px solid rgba(255,255,255,.18);
+      padding:.65rem .8rem; border-radius:12px; cursor:pointer; min-height:var(--hit)
+    }
 
     /* --- Footer --- */
-    footer{ padding:60px 0 70px; color:var(--muted) }
+    footer{ padding:40px 0 calc(40px + env(safe-area-inset-bottom)); color:var(--muted) }
     footer .row{ display:flex; gap:24px; flex-wrap:wrap; align-items:center; justify-content:space-between }
     .social a{ color:var(--muted); margin-right:10px; text-decoration:none; border-bottom:1px dotted rgba(255,255,255,.25) }
 
@@ -165,37 +200,26 @@
       35%{ box-shadow:0 0 0 6px rgba(142,225,255,.18) }
       100%{ box-shadow:0 0 0 rgba(142,225,255,0) }
     }
+
+    /* 모바일 세부 튜닝 */
     @media (max-width: 600px) {
-      .hero h1 {
-        font-size: 1.8rem;
-        line-height: 1.2;
-      }
-      .hero p {
-        font-size: 0.95rem;
-      }
-      .card {
-        width: 85vw;
-      }
-      .card figure {
-        aspect-ratio: 3/4; /* 모바일에서 너무 길지 않게 */
-      }
-      .lightbox .inner {
-        max-height: 90vh;
-      }
-      .lightbox figure {
-        height: 65vh;
-      }
-      .rail-btn {
-        width: 32px;
-        height: 32px;
-      }
+      .btn{ padding:.8rem 1rem }
+      .rail-btn{ width:36px; height:36px }
+    }
+
+    /* 모션 최소화 선호 */
+    @media (prefers-reduced-motion: reduce) {
+      *{ scroll-behavior:auto !important; transition:none !important; animation:none !important }
     }
   </style>
 </head>
 <body>
   <header>
     <div class="container nav">
-      <div class="brand"><span class="logo">🐎</span> CHC Poster Showcase</div>
+      <div class="brand">
+        <span class="logo" aria-hidden="true">🐎</span>
+        <span class="text" aria-label="CHC 포스터 쇼케이스">CHC Poster Showcase</span>
+      </div>
       <nav>
         <a href="#about">소개</a>
         <a href="#posters">포스터</a>
@@ -209,14 +233,14 @@
     <section class="hero container">
       <div class="hero-banner" aria-label="동아리 배너 이미지">
         <figure>
-          <!-- 가로 배너 이미지: 프로젝트에 assets/banner.jpg 추가 -->
-          <img loading="lazy" src="assets/banner.jpg" alt="CHC Horse Club 활동 배너 이미지">
+          <!-- 가로 배너 이미지: assets/banner.jpg (없으면 배경 그라데이션 유지) -->
+          <img loading="eager" src="assets/banner.jpg" alt="CHC Horse Club 활동 배너 이미지" onerror="this.style.display='none'">
         </figure>
       </div>
 
       <span class="chip">중앙대학교 승마동아리 · CHC</span>
       <h1>올해의 <em style="font-family:'Playfair Display',serif; font-style:normal">홍보 포스터</em>를 한 곳에서</h1>
-      <p>아래의 카드에서 이미지를 클릭하면 원본 크기로 감상할 수 있어요. GitHub Pages에 올리기만 하면 누구나 볼 수 있는 단일 페이지 사이트입니다.</p>
+      <p>아래의 카드에서 이미지를 탭하면 원본에 가깝게 크게 볼 수 있어요. GitHub Pages에 올리기만 하면 누구나 볼 수 있는 단일 페이지입니다.</p>
       <div class="actions">
         <a class="btn" href="#posters" data-soft-scroll>포스터 보러가기</a>
         <a class="btn" variant="ghost" href="#about" data-soft-scroll>동아리 소개</a>
@@ -227,7 +251,7 @@
     <section class="section" id="about">
       <div class="container">
         <h2 data-reveal>동아리 소개</h2>
-        <p class="lead" data-reveal>승마를 통해 균형감 · 집중력 · 교감을 배우는 CHC의 활동을 소개합니다. 아래 포스터 묶음은 5개의 테마(모집/안내/소개/활동사진/예고)로 구성되어 있으며, 모바일에서도 선명하게 보이도록 최적화했습니다.</p>
+        <p class="lead" data-reveal>승마를 통해 균형감 · 집중력 · 교감을 배우는 CHC의 활동을 소개합니다. 아래 포스터 묶음은 5개의 테마(모집/안내/소개/활동사진/예고)로 구성되어 있으며, iPhone에서도 선명하고 부드럽게 보이도록 최적화했습니다.</p>
       </div>
     </section>
 
@@ -235,18 +259,16 @@
     <section class="section" id="posters">
       <div class="container">
         <h2 data-reveal>Poster Collection</h2>
-        <p class="lead" data-reveal>이미지는 <strong>assets</strong> 폴더에 넣고 아래의 파일명만 맞춰 주세요. (webp 또는 jpg 권장, 2000px 이상)</p>
+        <p class="lead" data-reveal>이미지는 <strong>assets</strong> 폴더에 넣고 아래의 파일명만 맞춰 주세요. (webp 또는 jpg 권장, 긴 변 2000px 이상)</p>
 
         <!-- 가로 스와이프 + 버튼 내비게이션 -->
         <div class="rail-wrap">
           <div class="grid" id="posterRail" aria-label="포스터 가로 스크롤 목록">
-
-            
             <!-- 카드 1: JOIN -->
             <article class="card" data-reveal>
+              <span class="sr-only">클릭하면 크게 보기</span>
               <figure>
-
-                <img loading="lazy" src="assets/poster1.jpg" alt="Join — HORSE (8/22~31)">
+                <img loading="lazy" src="assets/poster1.jpg" alt="Join — HORSE (8/22~31)" draggable="false">
               </figure>
               <div class="meta">
                 <div class="title">JOIN</div>
@@ -256,45 +278,49 @@
 
             <!-- 카드 2: 회원모집 안내 -->
             <article class="card" data-reveal>
+              <span class="sr-only">클릭하면 크게 보기</span>
               <figure>
-                <img loading="lazy" src="assets/poster2.jpg" alt="회원모집 안내 포스터">
+                <img loading="lazy" src="assets/poster2.jpg" alt="회원모집 안내 포스터" draggable="false">
               </figure>
               <div class="meta">
                 <div class="title">회원모집 안내</div>
-                
+                <span class="tag">Info</span>
               </div>
             </article>
 
             <!-- 카드 3: 동아리 소개 -->
             <article class="card" data-reveal>
+              <span class="sr-only">클릭하면 크게 보기</span>
               <figure>
-                <img loading="lazy" src="assets/poster3.jpg" alt="동아리 소개 포스터">
+                <img loading="lazy" src="assets/poster3.jpg" alt="동아리 소개 포스터" draggable="false">
               </figure>
               <div class="meta">
                 <div class="title">동아리 소개</div>
-                
+                <span class="tag">About</span>
               </div>
             </article>
 
             <!-- 카드 4: 활동 사진 모음 -->
             <article class="card" data-reveal>
+              <span class="sr-only">클릭하면 크게 보기</span>
               <figure>
-                <img loading="lazy" src="assets/poster4.jpg" alt="활동 사진 모음 포스터">
+                <img loading="lazy" src="assets/poster4.jpg" alt="활동 사진 모음 포스터" draggable="false">
               </figure>
               <div class="meta">
                 <div class="title">활동 스냅</div>
-                
+                <span class="tag">Gallery</span>
               </div>
             </article>
 
             <!-- 카드 5: Coming Soon -->
             <article class="card" data-reveal>
+              <span class="sr-only">클릭하면 크게 보기</span>
               <figure>
-                <img loading="lazy" src="assets/poster5.jpg" alt="Coming Soon 예고 포스터">
+                <img loading="lazy" src="assets/poster5.jpg" alt="Coming Soon 예고 포스터" draggable="false">
               </figure>
               <div class="meta">
                 <div class="title">COMING SOON</div>
-                
+                <span class="tag">Preview</span>
               </div>
             </article>
           </div>
@@ -357,7 +383,7 @@
     // scroll reveal
     const io = new IntersectionObserver((entries)=>{
       entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('revealed'); io.unobserve(e.target) } })
-    }, {threshold:.15});
+    }, {threshold:.12});
     document.querySelectorAll('[data-reveal]').forEach(el=>io.observe(el));
 
     // 섹션 소프트 스크롤 + 도착 하이라이트
@@ -378,7 +404,7 @@
           e.preventDefault();
           softScrollTo(href);
         }
-      });
+      }, {passive:false});
     });
 
     // --- Poster Rail: 버튼 기반 내비게이션 (+ 드래그 스크롤 유지) ---
@@ -401,7 +427,7 @@
     function gotoIndex(i){
       const clamped = Math.max(0, Math.min(cards.length-1, i));
       cards[clamped].scrollIntoView({behavior:'smooth', inline:'center', block:'nearest'});
-      setTimeout(updateRailButtons, 10);
+      requestAnimationFrame(updateRailButtons);
     }
     function updateRailButtons(){
       const atStart = rail.scrollLeft <= 2;
@@ -411,15 +437,15 @@
     }
     railPrev.addEventListener('click', ()=> gotoIndex(getNearestIndex()-1));
     railNext.addEventListener('click', ()=> gotoIndex(getNearestIndex()+1));
-    rail.addEventListener('scroll', ()=> { requestAnimationFrame(updateRailButtons); });
-    window.addEventListener('resize', updateRailButtons);
+    rail.addEventListener('scroll', ()=> { requestAnimationFrame(updateRailButtons); }, {passive:true});
+    window.addEventListener('resize', updateRailButtons, {passive:true});
     updateRailButtons();
 
-    // 드래그 스크롤(선택 사항: 버튼 선호지만 함께 제공)
+    // 드래그 스크롤 (iOS: passive + touch-action으로 점프/선택 방지)
     let isDown=false, startX=0, startScroll=0, hasMoved=false;
     rail.addEventListener('pointerdown', (e)=>{
       isDown=true; hasMoved=false;
-      rail.setPointerCapture(e.pointerId);
+      rail.setPointerCapture?.(e.pointerId);
       startX=e.clientX; startScroll=rail.scrollLeft;
       rail.style.cursor='grabbing';
     });
@@ -428,22 +454,19 @@
       const dx=e.clientX - startX;
       if(Math.abs(dx)>3) hasMoved=true;
       rail.scrollLeft = startScroll - dx;
-    });
+    }, {passive:true});
     const endDrag = (e)=>{
       if(isDown){ isDown=false; rail.releasePointerCapture?.(e.pointerId); rail.style.cursor=''; }
-      // 드래그 종료 시 가까운 카드로 스냅
       gotoIndex(getNearestIndex());
     };
-    rail.addEventListener('pointerup', endDrag);
-    rail.addEventListener('pointercancel', endDrag);
+    rail.addEventListener('pointerup', endDrag, {passive:true});
+    rail.addEventListener('pointercancel', endDrag, {passive:true});
     rail.addEventListener('click', (e)=>{ if(hasMoved) e.preventDefault(); }, true);
-
-    // 키보드 화살표로도 이동
+    rail.setAttribute('tabindex','0');
     rail.addEventListener('keydown', (e)=>{
       if(e.key === 'ArrowRight'){ e.preventDefault(); railNext.click(); }
       if(e.key === 'ArrowLeft'){ e.preventDefault(); railPrev.click(); }
     });
-    rail.setAttribute('tabindex','0');
 
     // --- Lightbox (클릭하면 크게 보기) ---
     const lb = document.getElementById('lightbox');
@@ -459,23 +482,26 @@
       current = i;
       const img = cards[i].querySelector('img');
       const title = cards[i].querySelector('.title').textContent;
-      const tag = cards[i].querySelector('.tag').textContent;
+      const tagEl = cards[i].querySelector('.tag');
+      const tag = tagEl ? tagEl.textContent : '';
       lbImg.src = img.currentSrc || img.src;
       lbImg.alt = img.alt;
       lbTitle.textContent = title;
       lbTag.textContent = tag;
       lb.classList.add('open');
+      document.documentElement.style.overflow='hidden';
       document.body.style.overflow='hidden';
     }
-    function close(){ lb.classList.remove('open'); document.body.style.overflow=''; }
-    function nav(dir){
-      current = (current + dir + cards.length) % cards.length;
-      openAt(current);
+    function close(){
+      lb.classList.remove('open');
+      document.documentElement.style.overflow='';
+      document.body.style.overflow='';
     }
+    function nav(dir){ openAt((current + dir + cards.length) % cards.length); }
 
     cards.forEach((card,i)=>{ card.addEventListener('click', ()=>openAt(i)); });
     closeBtn.addEventListener('click', close);
-    lb.addEventListener('click', (e)=>{ if(e.target===lb) close(); });
+    lb.addEventListener('click', (e)=>{ if(e.target===lb) close(); }, {passive:true});
     document.addEventListener('keydown', (e)=>{
       if(!lb.classList.contains('open')) return;
       if(e.key==='Escape') close();
@@ -490,14 +516,16 @@
 
     // ZIP 안내
     document.getElementById('downloadZip').addEventListener('click', ()=>{
-      alert('GitHub에 새 레포를 만들고 이 index.html과 assets 폴더(이미지 5장 + banner.jpg)를 업로드하세요.\n\n파일 구조\n/ (루트)\n ├─ index.html\n └─ assets/\n     ├─ banner.jpg  ← 가로 배너\n     ├─ poster1.jpg\n     ├─ poster2.jpg\n     ├─ poster3.jpg\n     ├─ poster4.jpg\n     └─ poster5.jpg');
+      alert('GitHub에 새 레포를 만들고 이 index.html과 assets 폴더(이미지 5장 + banner.jpg)를 업로드하세요.\n\n파일 구조\n/ (루트)\n ├─ index.html\n └─ assets/\n     ├─ banner.jpg  ← 가로 배너(없어도 작동)\n     ├─ poster1.jpg\n     ├─ poster2.jpg\n     ├─ poster3.jpg\n     ├─ poster4.jpg\n     └─ poster5.jpg');
     });
+
+    // iOS 주소창 show/hide로 인한 100vh 점프 방지 (라이트박스 높이 보정)
+    const fixVH = ()=>{
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+    };
+    window.addEventListener('resize', fixVH, {passive:true});
+    fixVH();
   </script>
 </body>
 </html>
-
-
-
-
-
-
