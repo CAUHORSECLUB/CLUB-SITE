@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CHC Horse Club — Poster Showcase</title>
+  <meta name="description" content="중앙대학교 승마동아리 CHC 홍보 포스터 전시 사이트" />
+  <meta name="color-scheme" content="dark light" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;700;800;900&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0b0c10;         /* 배경 */
+      --bg-soft:#111319;    /* 섹션 카드 배경 */
+      --text:#eaedf2;       /* 본문 텍스트 */
+      --muted:#a8b0bd;      /* 보조 텍스트 */
+      --brand:#8ee1ff;      /* 포인트 컬러 */
+      --brand-2:#b5ffcf;    /* 포인트 보조 */
+      --card:#161922;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 18px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0; padding:0;
+      font-family:"Pretendard", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      color:var(--text);
+      background:radial-gradient(1200px 800px at 85% -10%, rgba(141,255,216,.08), transparent 60%),
+                 radial-gradient(1000px 700px at -10% 10%, rgba(124,181,255,.08), transparent 70%),
+                 var(--bg);
+      line-height:1.6;
+    }
+
+    /* --- Layout --- */
+    .container{ width:min(1200px, 92vw); margin:0 auto; }
+    header{
+      position:sticky; top:0; z-index:40; backdrop-filter:saturate(180%) blur(10px);
+      background:linear-gradient(to bottom, rgba(11,12,16,.78), rgba(11,12,16,.45));
+      border-bottom:1px solid rgba(255,255,255,.06);
+    }
+    .nav{ display:flex; align-items:center; justify-content:space-between; padding:.9rem 0; }
+    .brand{ display:flex; align-items:center; gap:.75rem; font-weight:800; letter-spacing:.5px }
+    .brand .logo{ width:34px; height:34px; border-radius:10px; background:linear-gradient(135deg, var(--brand), var(--brand-2)); box-shadow:var(--shadow); display:grid; place-items:center; font-weight:900; color:#0b0c10 }
+    .nav a{ color:var(--muted); text-decoration:none; margin-left:1.1rem; font-weight:600 }
+    .nav a:hover{ color:var(--text) }
+    .nav .cta{ margin-left:1.1rem; padding:.55rem .9rem; border-radius:12px; border:1px solid rgba(255,255,255,.12); color:var(--text) }
+
+    /* --- Hero --- */
+    .hero{ position:relative; isolation:isolate; padding:clamp(48px, 6vh, 80px) 0 40px }
+    .hero-banner{
+      overflow:hidden; border-radius:16px; box-shadow:var(--shadow);
+      margin:0 0 18px; background:#0f1117; border:1px solid rgba(255,255,255,.08);
+    }
+    .hero-banner figure{ margin:0; aspect-ratio:16/9; width:100%; height:auto; }
+    .hero-banner img{ width:100%; height:100%; object-fit:cover; display:block; filter:saturate(.98) contrast(1.02) }
+    .hero h1{ font-family:"Playfair Display", serif; font-size:clamp(38px, 6vw, 66px); line-height:1.05; margin:0 0 .5rem }
+    .hero p{ color:var(--muted); margin:0 0 1.2rem }
+    .hero .chip{ display:inline-flex; align-items:center; gap:.45rem; border:1px solid rgba(255,255,255,.12); padding:.35rem .6rem; border-radius:999px; font-size:.85rem; color:var(--muted) }
+    .hero .actions{ display:flex; gap:.6rem; margin-top:1rem }
+    .btn{ appearance:none; border:none; background:linear-gradient(135deg,var(--brand),var(--brand-2)); color:#0b0c10; font-weight:800; padding:.85rem 1rem; border-radius:14px; box-shadow:var(--shadow); cursor:pointer; position:relative; }
+    .btn[variant="ghost"]{ background:transparent; color:var(--text); border:1px solid rgba(255,255,255,.12) }
+    .btn:active{ transform:translateY(1px) scale(0.98); transition:transform .06s ease; }
+
+    /* --- Sections --- */
+    .section{ padding:70px 0 }
+    .section h2{ font-size:clamp(28px, 4vw, 42px); margin:0 0 .5rem; letter-spacing:.3px }
+    .section p.lead{ color:var(--muted); margin-top:.2rem }
+
+    /* --- Poster Rail --- */
+    .rail-wrap{
+      position:relative;
+    }
+    .grid{
+      display:flex; gap:18px; margin-top:28px;
+      overflow-x:auto; overflow-y:visible; padding-bottom:8px;
+      scroll-snap-type:x mandatory;
+      -webkit-overflow-scrolling:touch;
+      scrollbar-width:none;
+      scroll-behavior:smooth;
+    }
+    .grid::-webkit-scrollbar{ display:none; }
+
+    .card{
+      flex:0 0 auto; width:min(76vw, 520px);
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      border:1px solid rgba(255,255,255,.08); border-radius:var(--radius);
+      overflow:hidden; box-shadow:var(--shadow); position:relative;
+      scroll-snap-align:center;
+      cursor:pointer;
+    }
+    /* hint overlay */
+    .card::after{
+      content:"클릭하면 크게 보기";
+      position:absolute; left:12px; bottom:12px;
+      font-size:.8rem; color:#dfe7f5; opacity:0; transform:translateY(6px);
+      background:rgba(0,0,0,.35); padding:.25rem .5rem; border-radius:8px;
+      transition:opacity .25s ease, transform .25s ease;
+      pointer-events:none;
+    }
+    .card:hover::after{ opacity:1; transform:translateY(0) }
+
+    /* 포스터 비율: 1587x2245 */
+    .card figure{ margin:0; aspect-ratio:1587/2245; background:#0f1117; display:grid; place-items:center }
+    .card img{ width:100%; height:100%; object-fit:cover; display:block; filter:saturate(.98) contrast(1.02) }
+    .card .meta{ padding:14px 16px; display:flex; align-items:center; justify-content:space-between; gap:10px }
+    .meta .title{ font-weight:700; letter-spacing:.3px }
+    .meta .tag{ font-size:.82rem; color:var(--muted); padding:.25rem .55rem; border:1px solid rgba(255,255,255,.14); border-radius:999px }
+
+    @media (min-width:1024px){
+      .card{ width:520px }
+    }
+    .card:hover{ transform:translateY(-2px); transition:transform .25s ease }
+    .card:hover img{ transform:scale(1.01); transition:transform .35s ease }
+
+    /* Rail nav buttons */
+    .rail-nav{
+      position:absolute; inset:0; pointer-events:none;
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 4px;
+    }
+    .rail-btn{
+      pointer-events:auto;
+      background:rgba(15,17,23,.6);
+      border:1px solid rgba(255,255,255,.12);
+      backdrop-filter:blur(6px) saturate(160%);
+      color:var(--text);
+      width:40px; height:40px; border-radius:12px;
+      display:grid; place-items:center; cursor:pointer;
+      box-shadow:var(--shadow);
+      transition:transform .12s ease, opacity .2s ease;
+      user-select:none;
+    }
+    .rail-btn:active{ transform:scale(.98) }
+    .rail-btn[disabled]{ opacity:.35; cursor:not-allowed }
+
+    /* --- Lightbox --- */
+    .lightbox{ position:fixed; inset:0; background:rgba(6,8,12,.85); display:none; place-items:center; z-index:60 }
+    .lightbox.open{ display:grid }
+    .lightbox .inner{ width:min(1100px, 92vw); max-height:88vh; display:grid; gap:14px }
+    .lightbox figure{ margin:0; height:70vh; background:#000; border-radius:16px; overflow:hidden; box-shadow:var(--shadow) }
+    .lightbox img{ width:100%; height:100%; object-fit:contain }
+    .lightbox .bar{ display:flex; align-items:center; justify-content:space-between }
+    .lightbox .bar .left{ display:flex; align-items:center; gap:10px }
+    .lightbox .bar .title{ font-weight:800 }
+    .icon-btn{ background:transparent; color:var(--text); border:1px solid rgba(255,255,255,.18); padding:.55rem .75rem; border-radius:12px; cursor:pointer }
+
+    /* --- Footer --- */
+    footer{ padding:60px 0 70px; color:var(--muted) }
+    footer .row{ display:flex; gap:24px; flex-wrap:wrap; align-items:center; justify-content:space-between }
+    .social a{ color:var(--muted); margin-right:10px; text-decoration:none; border-bottom:1px dotted rgba(255,255,255,.25) }
+
+    /* scroll reveal */
+    [data-reveal]{ opacity:0; transform:translateY(16px); transition:all .6s ease }
+    [data-reveal].revealed{ opacity:1; transform:translateY(0) }
+
+    /* 도착 섹션 하이라이트 */
+    .pulse-on-arrival{ animation:pulseGlow 900ms ease-out 1; }
+    @keyframes pulseGlow{
+      0%{ box-shadow:0 0 0 rgba(142,225,255,.0) }
+      35%{ box-shadow:0 0 0 6px rgba(142,225,255,.18) }
+      100%{ box-shadow:0 0 0 rgba(142,225,255,0) }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <div class="brand"><span class="logo">🐎</span> CHC Poster Showcase</div>
+      <nav>
+        <a href="#about">소개</a>
+        <a href="#posters">포스터</a>
+        <a class="cta" href="#contact">문의</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero -->
+    <section class="hero container">
+      <div class="hero-banner" aria-label="동아리 배너 이미지">
+        <figure>
+          <!-- 가로 배너 이미지: 프로젝트에 assets/banner.jpg 추가 -->
+          <img loading="lazy" src="assets/banner.jpg" alt="CHC Horse Club 활동 배너 이미지">
+        </figure>
+      </div>
+
+      <span class="chip">중앙대학교 승마동아리 · CHC</span>
+      <h1>올해의 <em style="font-family:'Playfair Display',serif; font-style:normal">홍보 포스터</em>를 한 곳에서</h1>
+      <p>아래의 카드에서 이미지를 클릭하면 원본 크기로 감상할 수 있어요. GitHub Pages에 올리기만 하면 누구나 볼 수 있는 단일 페이지 사이트입니다.</p>
+      <div class="actions">
+        <a class="btn" href="#posters" data-soft-scroll>포스터 보러가기</a>
+        <a class="btn" variant="ghost" href="#about" data-soft-scroll>동아리 소개</a>
+      </div>
+    </section>
+
+    <!-- About -->
+    <section class="section" id="about">
+      <div class="container">
+        <h2 data-reveal>동아리 소개</h2>
+        <p class="lead" data-reveal>승마를 통해 균형감 · 집중력 · 교감을 배우는 CHC의 활동을 소개합니다. 아래 포스터 묶음은 5개의 테마(모집/안내/소개/활동사진/예고)로 구성되어 있으며, 모바일에서도 선명하게 보이도록 최적화했습니다.</p>
+      </div>
+    </section>
+
+    <!-- Posters Rail -->
+    <section class="section" id="posters">
+      <div class="container">
+        <h2 data-reveal>Poster Collection</h2>
+        <p class="lead" data-reveal>이미지는 <strong>assets</strong> 폴더에 넣고 아래의 파일명만 맞춰 주세요. (webp 또는 jpg 권장, 2000px 이상)</p>
+
+        <!-- 가로 스와이프 + 버튼 내비게이션 -->
+        <div class="rail-wrap">
+          <div class="grid" id="posterRail" aria-label="포스터 가로 스크롤 목록">
+            <!-- 카드 1: JOIN -->
+            <article class="card" data-reveal>
+              <figure>
+                <img loading="lazy" src="assets/poster1.jpg" alt="Join — HORSE (8/22~31)">
+              </figure>
+              <div class="meta">
+                <div class="title">JOIN</div>
+                <span class="tag">8/22–31</span>
+              </div>
+            </article>
+
+            <!-- 카드 2: 회원모집 안내 -->
+            <article class="card" data-reveal>
+              <figure>
+                <img loading="lazy" src="assets/poster2.jpg" alt="회원모집 안내 포스터">
+              </figure>
+              <div class="meta">
+                <div class="title">회원모집 안내</div>
+                
+              </div>
+            </article>
+
+            <!-- 카드 3: 동아리 소개 -->
+            <article class="card" data-reveal>
+              <figure>
+                <img loading="lazy" src="assets/poster3.jpg" alt="동아리 소개 포스터">
+              </figure>
+              <div class="meta">
+                <div class="title">동아리 소개</div>
+                
+              </div>
+            </article>
+
+            <!-- 카드 4: 활동 사진 모음 -->
+            <article class="card" data-reveal>
+              <figure>
+                <img loading="lazy" src="assets/poster4.jpg" alt="활동 사진 모음 포스터">
+              </figure>
+              <div class="meta">
+                <div class="title">활동 스냅</div>
+                
+              </div>
+            </article>
+
+            <!-- 카드 5: Coming Soon -->
+            <article class="card" data-reveal>
+              <figure>
+                <img loading="lazy" src="assets/poster5.jpg" alt="Coming Soon 예고 포스터">
+              </figure>
+              <div class="meta">
+                <div class="title">COMING SOON</div>
+                
+              </div>
+            </article>
+          </div>
+
+          <!-- 좌/우 이동 버튼 -->
+          <div class="rail-nav" aria-hidden="false">
+            <button class="rail-btn" id="railPrev" aria-label="이전 포스터 보기">◀</button>
+            <button class="rail-btn" id="railNext" aria-label="다음 포스터 보기">▶</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section class="section" id="contact">
+      <div class="container">
+        <h2 data-reveal>문의</h2>
+        <p class="lead" data-reveal>오픈채팅 또는 이메일로 문의 주세요. 하단의 소스 코드를 그대로 GitHub Pages에 올리면 즉시 배포됩니다.</p>
+        <div class="container" style="background:var(--bg-soft); border:1px solid rgba(255,255,255,.08); border-radius:var(--radius); padding:18px; box-shadow:var(--shadow);">
+          <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap">
+            <span class="chip">오픈카톡: <a style="color:var(--text)" href="#">https://open.kakao…</a></span>
+            <span class="chip">이메일: <a style="color:var(--text)" href="mailto:your@email">your@email</a></span>
+            <button class="btn" id="downloadZip" title="프로젝트 템플릿 ZIP 다운로드">ZIP 템플릿 받기</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container row">
+      <div>© <span id="year"></span> CHC Horse Club · Poster Showcase</div>
+      <div class="social">
+        <a href="#about">About</a>
+        <a href="#posters">Posters</a>
+        <a href="#">Top ↑</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Lightbox Modal (클릭하면 크게 보기) -->
+  <div class="lightbox" id="lightbox" aria-modal="true" role="dialog" aria-label="포스터 미리보기">
+    <div class="inner">
+      <figure><img alt="Poster" id="lightboxImg" /></figure>
+      <div class="bar">
+        <div class="left">
+          <span class="title" id="lightboxTitle">Poster</span>
+          <span class="tag" id="lightboxTag"></span>
+        </div>
+        <div class="right">
+          <button class="icon-btn" id="prevBtn" aria-label="이전">◀</button>
+          <button class="icon-btn" id="nextBtn" aria-label="다음">▶</button>
+          <button class="icon-btn" id="closeBtn" aria-label="닫기">닫기</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // scroll reveal
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('revealed'); io.unobserve(e.target) } })
+    }, {threshold:.15});
+    document.querySelectorAll('[data-reveal]').forEach(el=>io.observe(el));
+
+    // 섹션 소프트 스크롤 + 도착 하이라이트
+    function softScrollTo(id){
+      const target=document.querySelector(id);
+      if(!target) return;
+      target.scrollIntoView({ behavior:'smooth', block:'start' });
+      setTimeout(()=>{
+        const box = target.querySelector('.container') || target;
+        box.classList.add('pulse-on-arrival');
+        setTimeout(()=>box.classList.remove('pulse-on-arrival'), 950);
+      }, 350);
+    }
+    document.querySelectorAll('[data-soft-scroll]').forEach(a=>{
+      a.addEventListener('click', (e)=>{
+        const href = a.getAttribute('href');
+        if(href && href.startsWith('#')){
+          e.preventDefault();
+          softScrollTo(href);
+        }
+      });
+    });
+
+    // --- Poster Rail: 버튼 기반 내비게이션 (+ 드래그 스크롤 유지) ---
+    const rail = document.getElementById('posterRail');
+    const cards = [...rail.querySelectorAll('.card')];
+    const railPrev = document.getElementById('railPrev');
+    const railNext = document.getElementById('railNext');
+
+    function getViewportCenter(){ return rail.scrollLeft + rail.clientWidth/2; }
+    function getNearestIndex(){
+      const vc = getViewportCenter();
+      let best = 0, bestDiff = Infinity;
+      cards.forEach((card,i)=>{
+        const c = card.offsetLeft + card.offsetWidth/2;
+        const diff = Math.abs(c - vc);
+        if(diff < bestDiff){ bestDiff = diff; best = i; }
+      });
+      return best;
+    }
+    function gotoIndex(i){
+      const clamped = Math.max(0, Math.min(cards.length-1, i));
+      cards[clamped].scrollIntoView({behavior:'smooth', inline:'center', block:'nearest'});
+      setTimeout(updateRailButtons, 10);
+    }
+    function updateRailButtons(){
+      const atStart = rail.scrollLeft <= 2;
+      const atEnd = Math.abs(rail.scrollWidth - rail.clientWidth - rail.scrollLeft) <= 2;
+      railPrev.disabled = atStart;
+      railNext.disabled = atEnd;
+    }
+    railPrev.addEventListener('click', ()=> gotoIndex(getNearestIndex()-1));
+    railNext.addEventListener('click', ()=> gotoIndex(getNearestIndex()+1));
+    rail.addEventListener('scroll', ()=> { requestAnimationFrame(updateRailButtons); });
+    window.addEventListener('resize', updateRailButtons);
+    updateRailButtons();
+
+    // 드래그 스크롤(선택 사항: 버튼 선호지만 함께 제공)
+    let isDown=false, startX=0, startScroll=0, hasMoved=false;
+    rail.addEventListener('pointerdown', (e)=>{
+      isDown=true; hasMoved=false;
+      rail.setPointerCapture(e.pointerId);
+      startX=e.clientX; startScroll=rail.scrollLeft;
+      rail.style.cursor='grabbing';
+    });
+    rail.addEventListener('pointermove', (e)=>{
+      if(!isDown) return;
+      const dx=e.clientX - startX;
+      if(Math.abs(dx)>3) hasMoved=true;
+      rail.scrollLeft = startScroll - dx;
+    });
+    const endDrag = (e)=>{
+      if(isDown){ isDown=false; rail.releasePointerCapture?.(e.pointerId); rail.style.cursor=''; }
+      // 드래그 종료 시 가까운 카드로 스냅
+      gotoIndex(getNearestIndex());
+    };
+    rail.addEventListener('pointerup', endDrag);
+    rail.addEventListener('pointercancel', endDrag);
+    rail.addEventListener('click', (e)=>{ if(hasMoved) e.preventDefault(); }, true);
+
+    // 키보드 화살표로도 이동
+    rail.addEventListener('keydown', (e)=>{
+      if(e.key === 'ArrowRight'){ e.preventDefault(); railNext.click(); }
+      if(e.key === 'ArrowLeft'){ e.preventDefault(); railPrev.click(); }
+    });
+    rail.setAttribute('tabindex','0');
+
+    // --- Lightbox (클릭하면 크게 보기) ---
+    const lb = document.getElementById('lightbox');
+    const lbImg = document.getElementById('lightboxImg');
+    const lbTitle = document.getElementById('lightboxTitle');
+    const lbTag = document.getElementById('lightboxTag');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const closeBtn = document.getElementById('closeBtn');
+
+    let current = 0;
+    function openAt(i){
+      current = i;
+      const img = cards[i].querySelector('img');
+      const title = cards[i].querySelector('.title').textContent;
+      const tag = cards[i].querySelector('.tag').textContent;
+      lbImg.src = img.currentSrc || img.src;
+      lbImg.alt = img.alt;
+      lbTitle.textContent = title;
+      lbTag.textContent = tag;
+      lb.classList.add('open');
+      document.body.style.overflow='hidden';
+    }
+    function close(){ lb.classList.remove('open'); document.body.style.overflow=''; }
+    function nav(dir){
+      current = (current + dir + cards.length) % cards.length;
+      openAt(current);
+    }
+
+    cards.forEach((card,i)=>{ card.addEventListener('click', ()=>openAt(i)); });
+    closeBtn.addEventListener('click', close);
+    lb.addEventListener('click', (e)=>{ if(e.target===lb) close(); });
+    document.addEventListener('keydown', (e)=>{
+      if(!lb.classList.contains('open')) return;
+      if(e.key==='Escape') close();
+      if(e.key==='ArrowRight') nav(1);
+      if(e.key==='ArrowLeft') nav(-1);
+    });
+    prevBtn.addEventListener('click', ()=>nav(-1));
+    nextBtn.addEventListener('click', ()=>nav(1));
+
+    // footer year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // ZIP 안내
+    document.getElementById('downloadZip').addEventListener('click', ()=>{
+      alert('GitHub에 새 레포를 만들고 이 index.html과 assets 폴더(이미지 5장 + banner.jpg)를 업로드하세요.\n\n파일 구조\n/ (루트)\n ├─ index.html\n └─ assets/\n     ├─ banner.jpg  ← 가로 배너\n     ├─ poster1.jpg\n     ├─ poster2.jpg\n     ├─ poster3.jpg\n     ├─ poster4.jpg\n     └─ poster5.jpg');
+    });
+  </script>
+</body>
+</html>
