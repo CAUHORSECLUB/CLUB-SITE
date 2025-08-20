@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>CHC Horse Club — Presentation Mode</title>
   <!-- iPhone 노치/Safe Area 대응 -->
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
   <style>
     :root {
       --bg:#0b0c10;
@@ -123,24 +123,24 @@
     @media (max-width: 768px) {
       body { scroll-snap-type:none; }
       section {
-        height:auto;
-        min-height:auto;  /* 👈 한 화면 꽉 채우지 않음 */
-        padding:40px 16px; /* 👈 여백 줄임 */
+        height:85vh;   /* 👈 화면 꽉 차되 살짝 줄임 */
+        padding:40px 16px;
       }
-      h1 { font-size: clamp(28px, 8vw, 42px); }
+      h1 { font-size: clamp(26px, 7vw, 40px); }
       h2 { font-size: clamp(22px, 6vw, 32px); margin-bottom:0.5rem; }
       p  { font-size: 15px; line-height:1.5; }
 
       .poster-rail {
-        flex-direction:column;
-        overflow-x:visible;
+        flex-direction:row;          /* 👈 모바일도 가로 스크롤 */
+        overflow-x:auto;
         gap:12px;
-        margin-top:12px; /* 👈 포스터 위 간격 줄임 */
+        margin-top:12px;
+        touch-action: pan-x;         /* 👈 세로 드래그 무시 */
+        overscroll-behavior: contain;/* 👈 iOS 끊김/어두워짐 방지 */
       }
       .card {
-        width:100%;
-        max-width:380px;
-        margin:0 auto;
+        flex:0 0 auto;
+        width:min(75vw, 260px);
       }
       .lightbox img { max-width:95%; max-height:70%; }
     }
