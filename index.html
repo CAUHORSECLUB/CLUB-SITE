@@ -3,13 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <title>CHC Horse Club — Presentation Mode</title>
+  <!-- iPhone 노치/Safe Area 대응 + 모바일 확대/축소 잠금 -->
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
   <style>
     :root {
       --bg:#0b0c10;
       --text:#eaedf2;
       --muted:#a8b0bd;
-      --vh: 1vh;
+      --vh: 1vh; /* iOS 보정용 */
     }
     body {
       margin:0;
@@ -19,6 +20,7 @@
       height:calc(var(--vh, 1vh) * 100);
       overflow-y:scroll;
       scroll-snap-type: y mandatory;
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
     }
     section {
       height:calc(var(--vh, 1vh) * 100);
@@ -30,7 +32,6 @@
       scroll-snap-align:start;
       padding:40px 20px;
     }
-
     h1,h2 { margin:0 0 1rem; }
     h1 { font-size: clamp(36px, 6vw, 72px); font-weight:900; }
     h2 { font-size: clamp(28px, 5vw, 60px); font-weight:800; }
@@ -42,59 +43,149 @@
     }
 
     /* fade + zoom */
-    .fade-zoom { opacity:0; transform: scale(0.85); transition: all 0.8s ease; }
-    .fade-zoom.in { opacity:1; transform: scale(1); }
-    .fade-zoom.out { opacity:0; transform: scale(0.85); }
+    .fade-zoom {
+      opacity:0;
+      transform: scale(0.85);
+      transition: all 0.8s ease;
+    }
+    .fade-zoom.in {
+      opacity:1;
+      transform: scale(1);
+    }
+    .fade-zoom.out {
+      opacity:0;
+      transform: scale(0.85);
+    }
 
-    /* 모바일 전용: 가로 슬라이드 모드 */
+    /* posters (기본: PC 가로 스크롤) */
+    .poster-rail {
+      display:flex; gap:20px; overflow-x:auto;
+      padding:20px; margin-top:20px;
+      scroll-snap-type:x mandatory;
+    }
+    .poster-rail::-webkit-scrollbar { display:none; }
+    .card {
+      flex:0 0 auto;
+      width:min(80vw, 300px);
+      border-radius:12px;
+      overflow:hidden;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.1);
+      scroll-snap-align:center;
+      cursor:pointer;
+    }
+    .card img { width:100%; display:block; }
+    .meta { padding:10px; font-weight:bold; }
+
+    /* Lightbox */
+    .lightbox {
+      position:fixed; inset:0;
+      background:rgba(0,0,0,0.9);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:100;
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    }
+    .lightbox.open { display:flex; }
+    .lightbox img {
+      max-width:90%;
+      max-height:80%;
+      border-radius:12px;
+      box-shadow:0 0 20px rgba(0,0,0,.5);
+    }
+    .lightbox .close {
+      position:absolute;
+      top: max(16px, env(safe-area-inset-top));
+      right: max(16px, env(safe-area-inset-right));
+      background:rgba(255,255,255,.1);
+      border:none;
+      color:var(--text);
+      font-size:24px;
+      border-radius:50%;
+      width:44px; height:44px;
+      cursor:pointer;
+    }
+    .lightbox .nav {
+      position:absolute;
+      top:50%; transform:translateY(-50%);
+      font-size:40px;
+      background:rgba(255,255,255,.1);
+      border:none; color:var(--text);
+      width:50px; height:50px;
+      border-radius:50%;
+      cursor:pointer;
+    }
+    .lightbox .prev { left:20px; }
+    .lightbox .next { right:20px; }
+
+    /* 모바일 전용 반응형 (슬라이드 모드) */
     @media (max-width: 768px) {
-      body {
-        overflow-x:hidden;
-        overflow-y:hidden;
-      }
-      .slider {
-        display:flex;
-        width:100%;
-        height:100%;
-        overflow:hidden;
-        touch-action: pan-y;
-        transform: translateX(0);
-        transition: transform 0.5s ease;
-      }
+      body { scroll-snap-type:none; }
       section {
-        flex:0 0 100%;
-        height:100vh;
+        height:auto;
+        min-height:auto;
         padding:40px 16px;
       }
+      h1 { font-size: clamp(28px, 8vw, 42px); }
+      h2 { font-size: clamp(22px, 6vw, 32px); margin-bottom:0.5rem; }
+      p  { font-size: 15px; line-height:1.5; }
+
+      .poster-rail {
+        gap:0;
+        overflow:hidden;   /* 스크롤 대신 슬라이드 */
+        transform: translateX(0);
+        transition: transform 0.4s ease;
+        width:100%;
+      }
+      .card {
+        flex:0 0 100%;   /* 한 화면에 하나씩 */
+        max-width:100%;
+        border-radius:0;
+      }
+      .lightbox img { max-width:95%; max-height:70%; }
     }
   </style>
 </head>
 <body>
 
-  <!-- 모바일에선 .slider 컨테이너가 모든 섹션 감쌈 -->
-  <div class="slider" id="slider">
-    <section id="hero">
-      <h1 class="fade-zoom">🐎 CHC 승마동아리</h1>
-      <p class="fade-zoom">올해의 홍보 포스터를 만나보세요</p>
-    </section>
+  <!-- Hero -->
+  <section id="hero">
+    <h1 class="fade-zoom">🐎 CHC 승마동아리</h1>
+    <p class="fade-zoom">올해의 홍보 포스터를 만나보세요</p>
+  </section>
 
-    <section id="about">
-      <h2 class="fade-zoom">동아리 소개</h2>
-      <p class="fade-zoom">승마를 통해 균형감 · 집중력 · 교감을 배우는 CHC 활동을 소개합니다.</p>
-    </section>
+  <!-- About -->
+  <section id="about">
+    <h2 class="fade-zoom">동아리 소개</h2>
+    <p class="fade-zoom">승마를 통해 균형감 · 집중력 · 교감을 배우는 CHC 활동을 소개합니다.</p>
+  </section>
 
-    <section id="posters">
-      <h2 class="fade-zoom">포스터 모음</h2>
-      <div class="card"><img src="assets/poster1.jpg" alt="포스터1"></div>
-      <div class="card"><img src="assets/poster2.jpg" alt="포스터2"></div>
-      <div class="card"><img src="assets/poster3.jpg" alt="포스터3"></div>
-    </section>
+  <!-- Posters -->
+  <section id="posters">
+    <h2 class="fade-zoom">포스터 모음</h2>
+    <div class="poster-rail fade-zoom" id="posterRail">
+      <div class="card"><img src="assets/poster1.jpg" alt="포스터1"><div class="meta">JOIN</div></div>
+      <div class="card"><img src="assets/poster2.jpg" alt="포스터2"><div class="meta">회원모집</div></div>
+      <div class="card"><img src="assets/poster3.jpg" alt="포스터3"><div class="meta">소개</div></div>
+      <div class="card"><img src="assets/poster4.jpg" alt="포스터4"><div class="meta">활동사진</div></div>
+      <div class="card"><img src="assets/poster5.jpg" alt="포스터5"><div class="meta">COMING SOON</div></div>
+    </div>
+  </section>
 
-    <section id="contact">
-      <h2 class="fade-zoom">문의</h2>
-      <p class="fade-zoom">카톡: <a href="#" style="color:var(--text)">https://open.kakao…</a></p>
-      <p class="fade-zoom">이메일: <a href="mailto:your@email" style="color:var(--text)">your@email</a></p>
-    </section>
+  <!-- Contact -->
+  <section id="contact">
+    <h2 class="fade-zoom">문의</h2>
+    <p class="fade-zoom">카톡: <a href="#" style="color:var(--text)">https://open.kakao…</a></p>
+    <p class="fade-zoom">이메일: <a href="mailto:your@email" style="color:var(--text)">your@email</a></p>
+  </section>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox">
+    <button class="close" id="closeBtn">×</button>
+    <button class="nav prev" id="prevBtn">◀</button>
+    <img id="lightboxImg" alt="poster">
+    <button class="nav next" id="nextBtn">▶</button>
   </div>
 
   <script>
@@ -120,30 +211,79 @@
     }, { threshold:0.3 });
     faders.forEach(el => io.observe(el));
 
-    // 📌 모바일 슬라이드 기능
-    const slider = document.getElementById('slider');
+    // Lightbox
+    const cards = document.querySelectorAll('.card img');
+    const lb = document.getElementById('lightbox');
+    const lbImg = document.getElementById('lightboxImg');
+    const closeBtn = document.getElementById('closeBtn');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    let current = 0;
+
+    function openAt(i){
+      current = i;
+      lbImg.src = cards[i].src;
+      lb.classList.add('open');
+      document.body.style.overflow='hidden';
+    }
+    function close(){
+      lb.classList.remove('open');
+      document.body.style.overflow='';
+    }
+    function nav(dir){
+      current = (current + dir + cards.length) % cards.length;
+      lbImg.src = cards[current].src;
+    }
+
+    cards.forEach((c,i)=> c.addEventListener('click', ()=>openAt(i)));
+    closeBtn.addEventListener('click', close);
+    prevBtn.addEventListener('click', ()=>nav(-1));
+    nextBtn.addEventListener('click', ()=>nav(1));
+    lb.addEventListener('click', e=>{ if(e.target===lb) close(); });
+
+    // swipe (터치 슬라이드 - 라이트박스)
+    let startX=0;
+    lb.addEventListener('touchstart', e=>{ startX = e.touches[0].clientX; });
+    lb.addEventListener('touchend', e=>{
+      let dx = e.changedTouches[0].clientX - startX;
+      if(dx>50) nav(-1);
+      if(dx<-50) nav(1);
+    });
+
+    // 키보드 제어
+    document.addEventListener('keydown', e=>{
+      if(!lb.classList.contains('open')) return;
+      if(e.key==='Escape') close();
+      if(e.key==='ArrowLeft') nav(-1);
+      if(e.key==='ArrowRight') nav(1);
+    });
+
+    // 📌 모바일 슬라이드 (포스터)
+    const rail = document.getElementById('posterRail');
     let slideIndex = 0;
     function updateSlide() {
       if (window.innerWidth <= 768) {
-        slider.style.transform = `translateX(${-slideIndex * 100}%)`;
+        const cardWidth = rail.querySelector('.card').clientWidth;
+        rail.style.transform = `translateX(${-slideIndex * cardWidth}px)`;
       } else {
-        slider.style.transform = "none"; // PC에서는 원래대로
+        rail.style.transform = "none"; // PC에서는 원래대로
       }
     }
     window.addEventListener('resize', updateSlide);
 
     let touchStartX = 0;
-    slider.addEventListener('touchstart', e => {
+    rail.addEventListener('touchstart', e => {
+      if (window.innerWidth > 768) return;
       touchStartX = e.touches[0].clientX;
     }, {passive:true});
 
-    slider.addEventListener('touchend', e => {
-      if (window.innerWidth > 768) return; // 모바일 전용
+    rail.addEventListener('touchend', e => {
+      if (window.innerWidth > 768) return;
       let dx = e.changedTouches[0].clientX - touchStartX;
       const threshold = 50;
       if (dx > threshold && slideIndex > 0) {
         slideIndex--;
-      } else if (dx < -threshold && slideIndex < slider.children.length - 1) {
+      } else if (dx < -threshold && slideIndex < rail.children.length - 1) {
         slideIndex++;
       }
       updateSlide();
