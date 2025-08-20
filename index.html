@@ -1,27 +1,36 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>CHC Horse Club</title>
+  <title>CHC Horse Riding Club</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+  <!-- 구글 폰트: 필기체 -->
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+
+
+
+
+
+
   <style>
     :root {
-      --blue:#003366;    /* 깊은 파랑 */
-      --black:#0b0c10;   /* 검정 */
-      --gold:#d4af37;    /* 금색 */
-      --red:#c62828;     /* 강렬한 빨강 */
-      --gray:#f5f6f8;
+      --black:#0b0c10;
+      --gold:#d4af37;
+      --gold-light:#f3c41c;
       --vh: 1vh;
     }
+
     body {
       margin:0;
-      font-family: system-ui, sans-serif;
-      background: var(--gray);
-      color:#222;
+      font-family: "Noto Sans KR", system-ui, sans-serif;
+      background: var(--black);
+      color: var(--gold);
       height:calc(var(--vh, 1vh) * 100);
       overflow-y:scroll;
       scroll-snap-type: y mandatory;
     }
+
     section {
       height:calc(var(--vh, 1vh) * 100);
       display:flex;
@@ -33,38 +42,43 @@
       padding:40px 20px;
     }
 
-    /* Hero */
-    #hero {
-      background:url("assets/horse_bg.jpg") center/cover no-repeat, var(--black);
-      position:relative;
-      color:var(--gold);
+    h1,h2 {
+      margin:0 0 1rem;
+      font-weight:900;
     }
-    #hero::after {
-      content:"";
-      position:absolute; inset:0;
-      background:rgba(0,0,0,0.6);
+  h1 {
+  font-family: 'Great Vibes', cursive;
+  font-size: 20px;
+  font-weight: normal;
+  color: gold;
+  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5); /* 고급스러운 느낌 */
+}
+
+    h2 {
+      font-size: clamp(28px, 5vw, 56px);
+      color:var(--gold-light);
+      font-weight:700;
     }
-    #hero > * { position:relative; z-index:1; }
-
-    h1,h2 { margin:0 0 1rem; }
-    h1 { font-size: clamp(36px, 6vw, 72px); font-weight:900; letter-spacing:2px; }
-    h2 { font-size: clamp(28px, 5vw, 56px); font-weight:800; color:var(--blue); }
-    p  { font-size:18px; max-width:720px; margin:0 auto; line-height:1.6; }
-
-    /* Fade + Zoom */
-    .fade-zoom { opacity:0; transform: scale(0.9) translateY(20px); transition:all 0.9s ease; }
-    .fade-zoom.in { opacity:1; transform: scale(1) translateY(0); }
-    .fade-zoom.out { opacity:0; transform: scale(0.9) translateY(20px); }
-
-    /* About */
-    #about {
-      background: var(--blue);
-      color:#fff;
+    p  {
+      font-size:30px;
+      max-width:720px;
+      margin:0 auto;
+      line-height:1.6;
+      color:var(--gold-light);
     }
-    #about h2 { color:var(--gold); }
+
+    /* Fade + Up (위로 올라오기) */
+    .fade-up {
+      opacity:0;
+      transform: translateY(40px);
+      transition: all 1s ease;
+    }
+    .fade-up.in {
+      opacity:1;
+      transform: translateY(0);
+    }
 
     /* Posters */
-    #posters { background:#fff; }
     .poster-rail {
       display:flex; gap:20px; overflow-x:auto;
       padding:20px; margin-top:20px;
@@ -76,37 +90,35 @@
       width:min(80vw, 300px);
       border-radius:12px;
       overflow:hidden;
-      background:#fff;
-      border:2px solid var(--blue);
+      background:var(--black);
+      border:2px solid var(--gold);
       scroll-snap-align:center;
       cursor:pointer;
-      box-shadow:0 4px 14px rgba(0,0,0,0.15);
+      box-shadow:0 4px 14px rgba(0,0,0,0.6);
       transition:transform .3s, border-color .3s;
     }
     .card:hover {
       transform:translateY(-8px);
-      border-color:var(--red);
+      border-color:var(--gold-light);
     }
     .card img { width:100%; display:block; }
     .meta {
       padding:10px;
       font-weight:bold;
       text-align:center;
-      background:var(--blue);
-      color:white;
+      background:var(--black);
+      color:var(--gold-light);
     }
 
     /* Contact */
-    #contact {
-      background: linear-gradient(135deg, var(--black), var(--blue));
-      color:var(--gold);
-    }
-    #contact a { color:var(--red); font-weight:bold; }
+    #contact { color:var(--gold); }
+    #contact a { color:var(--gold-light); font-weight:bold; text-decoration:none; }
 
+    
     /* Lightbox */
     .lightbox {
       position:fixed; inset:0;
-      background:rgba(0,0,0,0.9);
+      background:rgba(0,0,0,0.95);
       display:none;
       align-items:center;
       justify-content:center;
@@ -117,13 +129,13 @@
       max-width:90%;
       max-height:80%;
       border-radius:12px;
-      box-shadow:0 0 20px rgba(0,0,0,.5);
+      box-shadow:0 0 30px rgba(212,175,55,.5);
     }
     .close, .nav {
       position:absolute;
-      background:rgba(255,255,255,.15);
-      border:none;
-      color:#fff;
+      background:rgba(212,175,55,.2);
+      border:1px solid var(--gold);
+      color:var(--gold);
       cursor:pointer;
       border-radius:50%;
       width:44px; height:44px;
@@ -138,32 +150,115 @@
     @media (max-width:768px){
       body { scroll-snap-type:none; }
       section { height:auto; min-height:calc(var(--vh,1vh)*100); padding:60px 20px; }
-      h1 { font-size: clamp(28px, 8vw, 48px); }
+      h1 { font-size: clamp(36px, 10vw, 60px); }
       h2 { font-size: clamp(22px, 6vw, 36px); }
       p  { font-size:16px; }
       .poster-rail { gap:12px; }
       .card { width:80%; max-width:340px; margin:0 auto; }
     }
+    /* Hero */
+#hero {
+  background: url("assets/배경사진.png") center/cover no-repeat; 
+  position: relative;
+  color: gold;
+  text-align: center;
+  height: 100vh; /* 화면 꽉 채우기 */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.5); /* 사진 위에 어두운 필터(글씨 잘 보이게) */
+}
+
+#hero {
+  position: relative; /* h1의 absolute 위치 기준점 */
+}
+
+#hero h1 {
+  position: absolute;
+  top: 40px;      /* 위쪽 여백 */
+  left: 20px;     /* 왼쪽 여백 */
+  margin: 0;
+}
+----------------------------------------------------------------------------------------------
+footer {
+    background:#0b0c10;
+    color:#d4af37;           /* gold */
+    border-top:1px solid rgba(212,175,55,.35);
+  }
+  .footer-wrap{
+    max-width:1300px;
+    margin:0 auto;
+    padding:36px 20px;
+    display:grid;
+    grid-template-columns: 2fr 1.2fr 1.2fr;
+    gap:28px;
+  }
+  .footer-brand h3{
+    margin:0 0 8px;
+    font-weight:800;
+    letter-spacing:.5px;
+  }
+  .footer-brand p{
+    margin:0;
+    color:#b9a86a;
+    line-height:1.5;
+  }
+  .footer-col h4{
+    margin:0 0 10px;
+    font-size:16px;
+    color:#f0d77a;
+  }
+  .footer-col a{
+    color:#d4af37;
+    text-decoration:none;
+  }
+  .footer-col a:hover{ text-decoration:underline; }
+  .footer-list{ margin:0; padding:0; list-style:none; }
+  .footer-list li{ margin:6px 0; }
+
+  .footer-bottom{
+    border-top:1px dashed rgba(212,175,55,.25);
+    display:flex; gap:16px; justify-content:space-between; align-items:center;
+    padding:14px 20px; max-width:1100px; margin:0 auto;
+    color:#a9944f; font-size:13px;
+  }
+  .footer-sns{ display:flex; gap:14px; }
+  .footer-sns a{ color:#d4af37; text-decoration:none; font-weight:600; }
+  .footer-sns a:hover{ text-decoration:underline; }
+
+  @media (max-width:768px){
+    .footer-wrap{ grid-template-columns: 1fr; gap:18px; padding:28px 16px; }
+    .footer-bottom{ flex-direction:column; gap:8px; text-align:center; }
+  }
   </style>
 </head>
 <body>
 
   <!-- Hero -->
   <section id="hero">
-    <h1 class="fade-zoom">🐎 CHC 승마동아리</h1>
-    <p class="fade-zoom">열정과 품격이 함께하는 중앙대학교 CHC</p>
+    <h1>🐎 CAU HORSE CLUB</h1> 
+    <p class="fade-up">調馬索 Chung-Ang University</p>
+   
   </section>
 
   <!-- About -->
   <section id="about">
-    <h2 class="fade-zoom">동아리 소개</h2>
-    <p class="fade-zoom">CHC는 승마를 통해 균형감 · 집중력 · 교감을 배우고<br> 파랑의 도전, 금빛의 자부심, 붉은 열정을 담아 활동합니다.</p>
-  </section>
+    <h2 class="fade-up">동아리 소개</h2>
+    <p class="fade-up"> 調馬索(조마삭)은 말에게 스트레칭을 시켜주는 훈련입니다<br> 우리는 가볍게 또는 즐겁게 승마를 즐기고 말과 교감하는 <br> 특별한 경험을 공유합니다. </p>
+
+</section>
 
   <!-- Posters -->
   <section id="posters">
-    <h2 class="fade-zoom">포스터 모음</h2>
-    <div class="poster-rail fade-zoom">
+    <h2 class="fade-up">포스터 모음</h2>
+    <div class="poster-rail fade-up">
       <div class="card"><img src="assets/poster1.jpg"><div class="meta">JOIN</div></div>
       <div class="card"><img src="assets/poster2.jpg"><div class="meta">회원모집</div></div>
       <div class="card"><img src="assets/poster3.jpg"><div class="meta">소개</div></div>
@@ -174,9 +269,13 @@
 
   <!-- Contact -->
   <section id="contact">
-    <h2 class="fade-zoom">문의</h2>
-    <p class="fade-zoom">카톡: <a href="#">https://open.kakao…</a></p>
-    <p class="fade-zoom">이메일: <a href="mailto:your@email">your@email</a></p>
+    <h2 class="fade-up">문의</h2>
+    <p class="fade-up">
+  카톡: 
+  <a href="https://open.kakao.com/o/skRoyGgh" target="_blank" rel="noopener noreferrer">
+    https://open.kakao.com/o/skRoyGgh
+  </a>
+</p>
   </section>
 
   <!-- Lightbox -->
@@ -192,8 +291,8 @@
     function fixVH(){ document.documentElement.style.setProperty('--vh', window.innerHeight*0.01+'px'); }
     window.addEventListener('resize', fixVH); fixVH();
 
-    // fade zoom observer
-    const faders = document.querySelectorAll('.fade-zoom');
+    // fade-up observer
+    const faders = document.querySelectorAll('.fade-up');
     const io = new IntersectionObserver((entries)=>{
       entries.forEach(entry=>{
         if(entry.isIntersecting){
@@ -235,5 +334,46 @@
       if(dx<-50) nav(1);
     });
   </script>
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+<footer>
+  <div class="footer-wrap">
+    <div class="footer-brand">
+      <h3>🐎 CAU HORSE CLUB</h3>
+      <p>
+        Passion &amp; 調馬索 at Chung-Ang University Riding • Community<br> 
+      </p>
+    </div>
+
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <ul class="footer-list">
+        <li>Kakao: <a href="https://open.kakao.com/o/skRoyGgh" target="_blank" rel="noopener noreferrer"> https://open.kakao.com/o/skRoyGgh </a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Quick Links</h4>
+      <ul class="footer-list">
+        <li><a href="#hero">Home</a></li>
+        <li><a href="#about">About Club</a></li>
+        <li><a href="#posters">Gallery</a></li>
+        <li><a href="#contact">Join Us</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <div>© <span id="year"></span> CAU Horse Club. All rights reserved.</div>
+    <div class="footer-sns">
+      <a href="#">top</a>
+    </div>
+  </div>
+
+  <script>
+    // 자동 연도 표시 (선택): 원치 않으면 이 스크립트 블록을 지워도 됩니다.
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</footer>
+
 </body>
 </html>
