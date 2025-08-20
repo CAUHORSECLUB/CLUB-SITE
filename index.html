@@ -2,105 +2,106 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>CHC Horse Club — Mobile</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <title>CHC Horse Club</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <style>
     :root {
-      --bg1:#0b0c10;
-      --bg2:#1f2833;
-      --text:#eaedf2;
-      --muted:#a8b0bd;
+      --blue:#003366;    /* 깊은 파랑 */
+      --black:#0b0c10;   /* 검정 */
+      --gold:#d4af37;    /* 금색 */
+      --red:#c62828;     /* 강렬한 빨강 */
+      --gray:#f5f6f8;
+      --vh: 1vh;
     }
     body {
       margin:0;
       font-family: system-ui, sans-serif;
-      background: linear-gradient(-45deg, var(--bg1), var(--bg2), #101820, #1c1c1c);
-      background-size: 400% 400%;
-      animation: bgMove 12s ease infinite;
-      color: var(--text);
-      overflow-x:hidden;
+      background: var(--gray);
+      color:#222;
+      height:calc(var(--vh, 1vh) * 100);
+      overflow-y:scroll;
+      scroll-snap-type: y mandatory;
     }
-    @keyframes bgMove {
-      0% { background-position:0% 50%; }
-      50% { background-position:100% 50%; }
-      100% { background-position:0% 50%; }
-    }
-
     section {
-      min-height:100vh;
+      height:calc(var(--vh, 1vh) * 100);
       display:flex;
       flex-direction:column;
       align-items:center;
       justify-content:center;
       text-align:center;
-      padding:40px 16px;
+      scroll-snap-align:start;
+      padding:40px 20px;
     }
+
+    /* Hero */
+    #hero {
+      background:url("assets/horse_bg.jpg") center/cover no-repeat, var(--black);
+      position:relative;
+      color:var(--gold);
+    }
+    #hero::after {
+      content:"";
+      position:absolute; inset:0;
+      background:rgba(0,0,0,0.6);
+    }
+    #hero > * { position:relative; z-index:1; }
+
     h1,h2 { margin:0 0 1rem; }
-    h1 {
-      font-size: clamp(28px, 8vw, 42px);
-      font-weight:900;
-      opacity:0;
-      transform: translateY(-20px) scale(0.9);
-      animation: titleIn 1s ease forwards;
-    }
-    @keyframes titleIn {
-      to { opacity:1; transform: translateY(0) scale(1); }
-    }
-    h2 { font-size: clamp(22px, 6vw, 32px); font-weight:800; }
-    p {
-      font-size: 15px;
-      color: var(--muted);
-      line-height:1.6;
-      max-width: 600px;
-    }
+    h1 { font-size: clamp(36px, 6vw, 72px); font-weight:900; letter-spacing:2px; }
+    h2 { font-size: clamp(28px, 5vw, 56px); font-weight:800; color:var(--blue); }
+    p  { font-size:18px; max-width:720px; margin:0 auto; line-height:1.6; }
 
-    /* fade + zoom */
-    .fade-zoom {
-      opacity:0;
-      transform: scale(0.85);
-      transition: all 0.7s ease;
-    }
-    .fade-zoom.in {
-      opacity:1;
-      transform: scale(1);
-    }
+    /* Fade + Zoom */
+    .fade-zoom { opacity:0; transform: scale(0.9) translateY(20px); transition:all 0.9s ease; }
+    .fade-zoom.in { opacity:1; transform: scale(1) translateY(0); }
+    .fade-zoom.out { opacity:0; transform: scale(0.9) translateY(20px); }
 
-    /* 포스터 슬라이드 */
-    .poster-wrapper {
-      position:relative;
-      width:100%;
-      overflow:hidden;
+    /* About */
+    #about {
+      background: var(--blue);
+      color:#fff;
     }
+    #about h2 { color:var(--gold); }
+
+    /* Posters */
+    #posters { background:#fff; }
     .poster-rail {
-      display:flex;
-      transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-      width:100%;
+      display:flex; gap:20px; overflow-x:auto;
+      padding:20px; margin-top:20px;
+      scroll-snap-type:x mandatory;
     }
+    .poster-rail::-webkit-scrollbar { display:none; }
     .card {
-      flex:0 0 100%;
-      max-width:100%;
-      position:relative;
-      transform: scale(0.95);
-      transition: transform 0.5s ease;
-    }
-    .card.active { transform: scale(1); }
-    .card img {
-      width:100%;
-      height:auto;
-      display:block;
+      flex:0 0 auto;
+      width:min(80vw, 300px);
       border-radius:12px;
-      box-shadow:0 4px 20px rgba(0,0,0,0.4);
+      overflow:hidden;
+      background:#fff;
+      border:2px solid var(--blue);
+      scroll-snap-align:center;
+      cursor:pointer;
+      box-shadow:0 4px 14px rgba(0,0,0,0.15);
+      transition:transform .3s, border-color .3s;
     }
+    .card:hover {
+      transform:translateY(-8px);
+      border-color:var(--red);
+    }
+    .card img { width:100%; display:block; }
     .meta {
-      position:absolute;
-      bottom:10px;
-      left:50%;
-      transform:translateX(-50%);
-      background:rgba(0,0,0,0.5);
-      padding:6px 12px;
-      border-radius:8px;
-      font-size:14px;
+      padding:10px;
+      font-weight:bold;
+      text-align:center;
+      background:var(--blue);
+      color:white;
     }
+
+    /* Contact */
+    #contact {
+      background: linear-gradient(135deg, var(--black), var(--blue));
+      color:var(--gold);
+    }
+    #contact a { color:var(--red); font-weight:bold; }
 
     /* Lightbox */
     .lightbox {
@@ -111,11 +112,7 @@
       justify-content:center;
       z-index:100;
     }
-    .lightbox.open { display:flex; animation: zoomIn 0.3s ease; }
-    @keyframes zoomIn {
-      from { opacity:0; transform: scale(0.8); }
-      to { opacity:1; transform: scale(1); }
-    }
+    .lightbox.open { display:flex; }
     .lightbox img {
       max-width:90%;
       max-height:80%;
@@ -124,9 +121,9 @@
     }
     .close, .nav {
       position:absolute;
-      background:rgba(255,255,255,.1);
+      background:rgba(255,255,255,.15);
       border:none;
-      color:var(--text);
+      color:#fff;
       cursor:pointer;
       border-radius:50%;
       width:44px; height:44px;
@@ -134,43 +131,52 @@
     }
     .close { top:20px; right:20px; }
     .nav { top:50%; transform:translateY(-50%); }
-    .prev { left:10px; }
-    .next { right:10px; }
+    .prev { left:20px; }
+    .next { right:20px; }
+
+    /* Mobile */
+    @media (max-width:768px){
+      body { scroll-snap-type:none; }
+      section { height:auto; min-height:calc(var(--vh,1vh)*100); padding:60px 20px; }
+      h1 { font-size: clamp(28px, 8vw, 48px); }
+      h2 { font-size: clamp(22px, 6vw, 36px); }
+      p  { font-size:16px; }
+      .poster-rail { gap:12px; }
+      .card { width:80%; max-width:340px; margin:0 auto; }
+    }
   </style>
 </head>
 <body>
 
   <!-- Hero -->
-  <section>
-    <h1>🐎 CHC 승마동아리</h1>
-    <p class="fade-zoom">올해의 홍보 포스터를 만나보세요</p>
+  <section id="hero">
+    <h1 class="fade-zoom">🐎 CHC 승마동아리</h1>
+    <p class="fade-zoom">열정과 품격이 함께하는 중앙대학교 CHC</p>
   </section>
 
   <!-- About -->
-  <section>
+  <section id="about">
     <h2 class="fade-zoom">동아리 소개</h2>
-    <p class="fade-zoom">승마를 통해 균형감 · 집중력 · 교감을 배우는 CHC 활동을 소개합니다.</p>
+    <p class="fade-zoom">CHC는 승마를 통해 균형감 · 집중력 · 교감을 배우고<br> 파랑의 도전, 금빛의 자부심, 붉은 열정을 담아 활동합니다.</p>
   </section>
 
   <!-- Posters -->
-  <section>
+  <section id="posters">
     <h2 class="fade-zoom">포스터 모음</h2>
-    <div class="poster-wrapper">
-      <div class="poster-rail" id="posterRail">
-        <div class="card active"><img src="assets/poster1.jpg" alt="포스터1"><div class="meta">JOIN</div></div>
-        <div class="card"><img src="assets/poster2.jpg" alt="포스터2"><div class="meta">회원모집</div></div>
-        <div class="card"><img src="assets/poster3.jpg" alt="포스터3"><div class="meta">소개</div></div>
-        <div class="card"><img src="assets/poster4.jpg" alt="포스터4"><div class="meta">활동사진</div></div>
-        <div class="card"><img src="assets/poster5.jpg" alt="포스터5"><div class="meta">COMING SOON</div></div>
-      </div>
+    <div class="poster-rail fade-zoom">
+      <div class="card"><img src="assets/poster1.jpg"><div class="meta">JOIN</div></div>
+      <div class="card"><img src="assets/poster2.jpg"><div class="meta">회원모집</div></div>
+      <div class="card"><img src="assets/poster3.jpg"><div class="meta">소개</div></div>
+      <div class="card"><img src="assets/poster4.jpg"><div class="meta">활동사진</div></div>
+      <div class="card"><img src="assets/poster5.jpg"><div class="meta">COMING SOON</div></div>
     </div>
   </section>
 
   <!-- Contact -->
-  <section>
+  <section id="contact">
     <h2 class="fade-zoom">문의</h2>
-    <p class="fade-zoom">카톡: <a href="#" style="color:var(--text)">https://open.kakao…</a></p>
-    <p class="fade-zoom">이메일: <a href="mailto:your@email" style="color:var(--text)">your@email</a></p>
+    <p class="fade-zoom">카톡: <a href="#">https://open.kakao…</a></p>
+    <p class="fade-zoom">이메일: <a href="mailto:your@email">your@email</a></p>
   </section>
 
   <!-- Lightbox -->
@@ -182,14 +188,24 @@
   </div>
 
   <script>
-    // fade+zoom 애니메이션
+    // vh 보정
+    function fixVH(){ document.documentElement.style.setProperty('--vh', window.innerHeight*0.01+'px'); }
+    window.addEventListener('resize', fixVH); fixVH();
+
+    // fade zoom observer
     const faders = document.querySelectorAll('.fade-zoom');
     const io = new IntersectionObserver((entries)=>{
       entries.forEach(entry=>{
-        if(entry.isIntersecting) entry.target.classList.add('in');
+        if(entry.isIntersecting){
+          entry.target.classList.add('in');
+          entry.target.classList.remove('out');
+        } else {
+          entry.target.classList.remove('in');
+          entry.target.classList.add('out');
+        }
       });
-    }, { threshold:0.3 });
-    faders.forEach(el => io.observe(el));
+    }, {threshold:0.3});
+    faders.forEach(el=>io.observe(el));
 
     // Lightbox
     const cards = document.querySelectorAll('.card img');
@@ -198,59 +214,26 @@
     const closeBtn = document.getElementById('closeBtn');
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
-    let current = 0;
+    let current=0;
 
-    function openAt(i){
-      current = i;
-      lbImg.src = cards[i].src;
-      lb.classList.add('open');
-      document.body.style.overflow='hidden';
-    }
-    function close(){
-      lb.classList.remove('open');
-      document.body.style.overflow='';
-    }
-    function nav(dir){
-      current = (current + dir + cards.length) % cards.length;
-      lbImg.src = cards[current].src;
-    }
+    function openAt(i){ current=i; lbImg.src=cards[i].src; lb.classList.add('open'); document.body.style.overflow='hidden'; }
+    function close(){ lb.classList.remove('open'); document.body.style.overflow=''; }
+    function nav(dir){ current=(current+dir+cards.length)%cards.length; lbImg.src=cards[current].src; }
 
-    cards.forEach((c,i)=> c.addEventListener('click', ()=>openAt(i)));
-    closeBtn.addEventListener('click', close);
-    prevBtn.addEventListener('click', ()=>nav(-1));
-    nextBtn.addEventListener('click', ()=>nav(1));
-    lb.addEventListener('click', e=>{ if(e.target===lb) close(); });
+    cards.forEach((c,i)=>c.addEventListener('click',()=>openAt(i)));
+    closeBtn.addEventListener('click',close);
+    prevBtn.addEventListener('click',()=>nav(-1));
+    nextBtn.addEventListener('click',()=>nav(1));
+    lb.addEventListener('click',e=>{ if(e.target===lb) close(); });
 
-    // swipe (라이트박스)
+    // swipe
     let startX=0;
-    lb.addEventListener('touchstart', e=>{ startX = e.touches[0].clientX; });
-    lb.addEventListener('touchend', e=>{
-      let dx = e.changedTouches[0].clientX - startX;
+    lb.addEventListener('touchstart',e=>{startX=e.touches[0].clientX;});
+    lb.addEventListener('touchend',e=>{
+      let dx=e.changedTouches[0].clientX-startX;
       if(dx>50) nav(-1);
       if(dx<-50) nav(1);
     });
-
-    // 포스터 슬라이드 (모바일)
-    const rail = document.getElementById('posterRail');
-    const cardEls = rail.querySelectorAll('.card');
-    let slideIndex = 0;
-    function updateSlide() {
-      const cardWidth = rail.querySelector('.card').clientWidth;
-      rail.style.transform = `translateX(${-slideIndex * cardWidth}px)`;
-      cardEls.forEach((c,i)=> c.classList.toggle('active', i===slideIndex));
-    }
-    let touchStartX = 0;
-    rail.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, {passive:true});
-    rail.addEventListener('touchend', e => {
-      let dx = e.changedTouches[0].clientX - touchStartX;
-      const threshold = 50;
-      if (dx > threshold && slideIndex > 0) slideIndex--;
-      else if (dx < -threshold && slideIndex < rail.children.length - 1) slideIndex++;
-      updateSlide();
-    }, {passive:true});
-
-    updateSlide();
-    window.addEventListener('resize', updateSlide);
   </script>
 </body>
 </html>
