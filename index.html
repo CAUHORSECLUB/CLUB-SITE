@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>CHC Horse Club — Presentation Mode</title>
-  <!-- iPhone 노치/Safe Area + 모바일 확대/축소 잠금 -->
+  <!-- iPhone 노치/Safe Area 대응 + 모바일 확대/축소 잠금 -->
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
   <style>
     :root {
@@ -12,17 +12,15 @@
       --muted:#a8b0bd;
       --vh: 1vh; /* iOS 보정용 */
     }
-    * { box-sizing: border-box; }
     body {
       margin:0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      font-family: system-ui, sans-serif;
       background: var(--bg);
       color: var(--text);
       height:calc(var(--vh, 1vh) * 100);
       overflow-y:scroll;
       scroll-snap-type: y mandatory;
       padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-      overscroll-behavior-y:none; /* 상하 탄성 최소화 */
     }
     section {
       height:calc(var(--vh, 1vh) * 100);
@@ -44,28 +42,26 @@
       margin:0 auto;
     }
 
-    /* 이미지 드래그/선택 방지 */
-    img { -webkit-user-drag:none; user-select:none; -webkit-user-select:none; }
-
     /* fade + zoom */
-    .fade-zoom { opacity:0; transform: scale(0.85); transition: all 0.8s ease; }
-    .fade-zoom.in { opacity:1; transform: scale(1); }
-    .fade-zoom.out { opacity:0; transform: scale(0.85); }
+    .fade-zoom {
+      opacity:0;
+      transform: scale(0.85);
+      transition: all 0.8s ease;
+    }
+    .fade-zoom.in {
+      opacity:1;
+      transform: scale(1);
+    }
+    .fade-zoom.out {
+      opacity:0;
+      transform: scale(0.85);
+    }
 
-    /* posters (기본: 데스크톱/태블릿) */
+    /* posters (기본: PC 가로 스크롤) */
     .poster-rail {
-      display:flex;
-      gap:20px;
-      overflow-x:auto;
-      overflow-y:hidden;
-      padding:16px 20px;
-      margin-top:14px;
+      display:flex; gap:20px; overflow-x:auto;
+      padding:20px; margin-top:20px;
       scroll-snap-type:x mandatory;
-      -webkit-overflow-scrolling: touch;     /* iOS 부드러운 스크롤 */
-      overscroll-behavior-x: contain;        /* 가로 오버스크롤 제어 */
-      scrollbar-width:none;                  /* Firefox */
-      touch-action: pan-x;                   /* 가로 제스처만 */
-      mask-image: linear-gradient( to right, transparent 0, #000 24px, #000 calc(100% - 24px), transparent 100%);
     }
     .poster-rail::-webkit-scrollbar { display:none; }
     .card {
@@ -77,7 +73,6 @@
       border:1px solid rgba(255,255,255,.1);
       scroll-snap-align:center;
       cursor:pointer;
-      transform: translateZ(0); /* GPU 합성으로 잔상/깜빡임 감소 */
     }
     .card img { width:100%; display:block; }
     .meta { padding:10px; font-weight:bold; }
@@ -91,7 +86,6 @@
       justify-content:center;
       z-index:100;
       padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-      backdrop-filter: blur(0.5px);
     }
     .lightbox.open { display:flex; }
     .lightbox img {
@@ -100,48 +94,54 @@
       border-radius:12px;
       box-shadow:0 0 20px rgba(0,0,0,.5);
     }
-    .lightbox .close,
-    .lightbox .nav {
-      background:rgba(255,255,255,.12);
-      border:none; color:var(--text); cursor:pointer;
-      -webkit-tap-highlight-color: transparent;
-      touch-action: manipulation;
-    }
     .lightbox .close {
       position:absolute;
       top: max(16px, env(safe-area-inset-top));
       right: max(16px, env(safe-area-inset-right));
+      background:rgba(255,255,255,.1);
+      border:none;
+      color:var(--text);
       font-size:24px;
       border-radius:50%;
       width:44px; height:44px;
+      cursor:pointer;
     }
     .lightbox .nav {
-      position:absolute; top:50%; transform:translateY(-50%);
-      font-size:40px; width:50px; height:50px; border-radius:50%;
+      position:absolute;
+      top:50%; transform:translateY(-50%);
+      font-size:40px;
+      background:rgba(255,255,255,.1);
+      border:none; color:var(--text);
+      width:50px; height:50px;
+      border-radius:50%;
+      cursor:pointer;
     }
     .lightbox .prev { left:20px; }
     .lightbox .next { right:20px; }
 
-    /* 모바일 전용 */
+    /* 모바일 전용 반응형 (슬라이드 모드) */
     @media (max-width: 768px) {
       body { scroll-snap-type:none; }
       section {
-        height:85vh;          /* 꽉 차되 살짝 짧게 */
-        padding:32px 16px;
+        height:auto;
+        min-height:auto;
+        padding:40px 16px;
       }
-      h1 { font-size: clamp(26px, 7.5vw, 40px); }
-      h2 { font-size: clamp(22px, 6.5vw, 32px); margin-bottom:0.4rem; }
+      h1 { font-size: clamp(28px, 8vw, 42px); }
+      h2 { font-size: clamp(22px, 6vw, 32px); margin-bottom:0.5rem; }
       p  { font-size: 15px; line-height:1.5; }
 
-      /* ✅ 모바일도 가로 스크롤 유지 & 끊김 완화 */
       .poster-rail {
-        gap:12px;
-        padding:12px 12px;
-        margin-top:8px;
-        touch-action: pan-x;
-        overscroll-behavior: contain;
+        gap:0;
+        overflow:hidden;   /* 스크롤 대신 슬라이드 */
+        transform: translateX(0);
+        transition: transform 0.4s ease;
       }
-      .card { width: clamp(220px, 70vw, 300px); }
+      .card {
+        flex:0 0 100%;   /* 한 화면에 하나씩 */
+        max-width:100%;
+        border-radius:0;
+      }
       .lightbox img { max-width:95%; max-height:70%; }
     }
   </style>
@@ -164,11 +164,11 @@
   <section id="posters">
     <h2 class="fade-zoom">포스터 모음</h2>
     <div class="poster-rail fade-zoom" id="posterRail">
-      <div class="card"><img src="assets/poster1.jpg" alt="포스터1" loading="lazy"><div class="meta">JOIN</div></div>
-      <div class="card"><img src="assets/poster2.jpg" alt="포스터2" loading="lazy"><div class="meta">회원모집</div></div>
-      <div class="card"><img src="assets/poster3.jpg" alt="포스터3" loading="lazy"><div class="meta">소개</div></div>
-      <div class="card"><img src="assets/poster4.jpg" alt="포스터4" loading="lazy"><div class="meta">활동사진</div></div>
-      <div class="card"><img src="assets/poster5.jpg" alt="포스터5" loading="lazy"><div class="meta">COMING SOON</div></div>
+      <div class="card"><img src="assets/poster1.jpg" alt="포스터1"><div class="meta">JOIN</div></div>
+      <div class="card"><img src="assets/poster2.jpg" alt="포스터2"><div class="meta">회원모집</div></div>
+      <div class="card"><img src="assets/poster3.jpg" alt="포스터3"><div class="meta">소개</div></div>
+      <div class="card"><img src="assets/poster4.jpg" alt="포스터4"><div class="meta">활동사진</div></div>
+      <div class="card"><img src="assets/poster5.jpg" alt="포스터5"><div class="meta">COMING SOON</div></div>
     </div>
   </section>
 
@@ -181,15 +181,17 @@
 
   <!-- Lightbox -->
   <div class="lightbox" id="lightbox">
-    <button class="close" id="closeBtn" aria-label="닫기">×</button>
-    <button class="nav prev" id="prevBtn" aria-label="이전">◀</button>
+    <button class="close" id="closeBtn">×</button>
+    <button class="nav prev" id="prevBtn">◀</button>
     <img id="lightboxImg" alt="poster">
-    <button class="nav next" id="nextBtn" aria-label="다음">▶</button>
+    <button class="nav next" id="nextBtn">▶</button>
   </div>
 
   <script>
     // vh 보정 (iOS Safari)
-    function fixVH(){ document.documentElement.style.setProperty('--vh', (window.innerHeight * 0.01) + 'px'); }
+    function fixVH(){
+      document.documentElement.style.setProperty('--vh', window.innerHeight * 0.01 + 'px');
+    }
     window.addEventListener('resize', fixVH);
     fixVH();
 
@@ -197,8 +199,13 @@
     const faders = document.querySelectorAll('.fade-zoom');
     const io = new IntersectionObserver((entries)=>{
       entries.forEach(entry=>{
-        if(entry.isIntersecting){ entry.target.classList.add('in'); entry.target.classList.remove('out'); }
-        else { entry.target.classList.remove('in'); entry.target.classList.add('out'); }
+        if(entry.isIntersecting){
+          entry.target.classList.add('in');
+          entry.target.classList.remove('out');
+        } else {
+          entry.target.classList.remove('in');
+          entry.target.classList.add('out');
+        }
       });
     }, { threshold:0.3 });
     faders.forEach(el => io.observe(el));
@@ -216,7 +223,7 @@
       current = i;
       lbImg.src = cards[i].src;
       lb.classList.add('open');
-      document.body.style.overflow='hidden'; // 뒷배경 스크롤 방지
+      document.body.style.overflow='hidden';
     }
     function close(){
       lb.classList.remove('open');
@@ -233,14 +240,14 @@
     nextBtn.addEventListener('click', ()=>nav(1));
     lb.addEventListener('click', e=>{ if(e.target===lb) close(); });
 
-    // Lightbox swipe
+    // swipe (터치 슬라이드 - 라이트박스)
     let startX=0;
-    lb.addEventListener('touchstart', e=>{ startX = e.touches[0].clientX; }, {passive:true});
+    lb.addEventListener('touchstart', e=>{ startX = e.touches[0].clientX; });
     lb.addEventListener('touchend', e=>{
-      const dx = e.changedTouches[0].clientX - startX;
+      let dx = e.changedTouches[0].clientX - startX;
       if(dx>50) nav(-1);
       if(dx<-50) nav(1);
-    }, {passive:true});
+    });
 
     // 키보드 제어
     document.addEventListener('keydown', e=>{
@@ -250,15 +257,37 @@
       if(e.key==='ArrowRight') nav(1);
     });
 
-    // 🧯 포스터 레일에서 세로 스와이프가 페이지 스크롤로 섞이는 것 방지(모바일)
+    // 📌 모바일 슬라이드 (포스터)
     const rail = document.getElementById('posterRail');
-    rail.addEventListener('touchmove', (e)=>{
-      // 가로로 충분히 움직이는 중엔 기본 스크롤 막음 -> 끊김/어두워짐 완화
-      if (Math.abs(e.touches[0].clientX - (rail._sx||0)) > Math.abs(e.touches[0].clientY - (rail._sy||0))) {
-        e.preventDefault();
+    let slideIndex = 0;
+    function updateSlide() {
+      if (window.innerWidth <= 768) {
+        const width = rail.clientWidth;
+        rail.style.transform = `translateX(${-slideIndex * width}px)`;
+      } else {
+        rail.style.transform = "none"; // PC에서는 원래대로
       }
-    }, {passive:false});
-    rail.addEventListener('touchstart', (e)=>{ rail._sx = e.touches[0].clientX; rail._sy = e.touches[0].clientY; }, {passive:true});
+    }
+    window.addEventListener('resize', updateSlide);
+
+    let touchStartX = 0;
+    rail.addEventListener('touchstart', e => {
+      touchStartX = e.touches[0].clientX;
+    }, {passive:true});
+
+    rail.addEventListener('touchend', e => {
+      if (window.innerWidth > 768) return; // 모바일 전용
+      let dx = e.changedTouches[0].clientX - touchStartX;
+      const threshold = 50;
+      if (dx > threshold && slideIndex > 0) {
+        slideIndex--;
+      } else if (dx < -threshold && slideIndex < rail.children.length - 1) {
+        slideIndex++;
+      }
+      updateSlide();
+    }, {passive:true});
+
+    updateSlide();
   </script>
 </body>
 </html>
