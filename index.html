@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>CAU Horse Riding Club</title>
+  <title>CHC Horse Riding Club</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 
   <!-- 구글 폰트: 필기체 -->
-<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="normal">
 
 
 
@@ -239,6 +239,50 @@ footer {
     .footer-wrap{ grid-template-columns: 1fr; gap:18px; padding:28px 16px; }
     .footer-bottom{ flex-direction:column; gap:8px; text-align:center; }
   }
+
+/* FAQ */
+#faq {
+  padding: 60px 20px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+#faq h2 {
+  text-align: center;
+  margin-bottom: 40px;
+  color: var(--gold-light);
+}
+
+.faq-item {
+  width: 100%;
+  height: 160px; /* 🔥 박스 크기 통일 */
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* 수직 가운데 */
+  padding: 20px;
+  border: 1px solid rgba(212,175,55,0.4);
+  border-radius: 10px;
+  background: rgba(255,255,255,0.02);
+  margin-bottom: 20px;
+  text-align: right; /* 🔥 오른쪽 정렬 */
+  box-sizing: border-box;
+}
+
+.question {
+  font-weight: 700;
+  color: var(--gold-light);
+  margin-bottom: 10px;
+  font-size: 30px;
+}
+
+.answer {
+  color: var(--gold);
+  line-height: 1.6;
+  margin: 0;
+  font-size: 20px;
+}
+
+
   </style>
 </head>
 <body>
@@ -259,7 +303,7 @@ footer {
 
   <!-- Posters -->
   <section id="posters">
-    <h2 class="fade-up">포스터 모음</h2>
+    <h2 class="fade-up">홍보</h2>
     <div class="poster-rail fade-up">
       <div class="card"><img src="assets/poster1.jpg"><div class="meta">JOIN</div></div>
       <div class="card"><img src="assets/poster2.jpg"><div class="meta">회원모집</div></div>
@@ -285,6 +329,34 @@ footer {
   </a>
 </p>
   </section>
+
+   <!-- FAQ -->
+<section id="faq">
+  <h2 class="fade-up">자주 묻는 질문 (FAQ)</h2>
+
+  <div class="faq-item fade-up">
+    <p class="question">Q. 모든 승마 활동은 무조건 필참인가요?</p>
+    <p class="answer">A. 아닙니다! 상황에 따라 유동적으로 참여할 수 있습니다.</p>
+  </div>
+
+  <div class="faq-item fade-up">
+    <p class="question">Q. 활동은 어디서 이루어지나요?</p>
+    <p class="answer">A. 주로 <strong>세인트이콰인 승마클럽</strong>에서 진행합니다.</p>
+  </div>
+
+  <div class="faq-item fade-up">
+    <p class="question">Q. 회비는 얼마인가요?</p>
+    <p class="answer">A. 한 학기 기준 <strong>5,000원</strong>이며, 말에게 줄 간식을 사는데 사용됩니다. <strong>승마 기승 비용</strong>은 별도로 안내됩니다.</p>
+  </div>
+
+  <div class="faq-item fade-up">
+    <p class="question">Q. 기승비는 얼마인가요? </p>
+    <p class="answer">A. 1학기때 저희는 쿠폰을 단체로 구매해 비용을 절감해서 10%할인된 가격으로 활동을 했습니다. 인원이 고정적이지 않아서 
+      자세한 비용은 확정할 수 없고 대략 80000원 이상으로 측정될 수 있겠습니다.
+    </p>
+  </div>
+</section>
+
 
   <!-- Lightbox -->
   <div class="lightbox" id="lightbox">
@@ -367,6 +439,7 @@ footer {
         <li><a href="#about">About Club</a></li>
         <li><a href="#posters">Gallery</a></li>
         <li><a href="#contact">Join Us</a></li>
+        <li><a href="#faq">FAQ</a></li>
       </ul>
     </div>
   </div>
@@ -383,7 +456,6 @@ footer {
     document.getElementById('year').textContent = new Date().getFullYear();
   </script>
 </footer>
-
+67
 </body>
 </html>
-
